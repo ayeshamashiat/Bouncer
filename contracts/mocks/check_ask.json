@@ -1,0 +1,158 @@
+{
+    "verdict": "ASK",
+    "reason": "linked in 3 hops to known-malicious skill solana-wallet-x via pdfhelper-cdn[.]top -> 91.92.242[.]30; IP 91.92.242[.]30 is used by 17 known-malicious skills",
+    "route": [
+        "skill:demo-pdf-helper",
+        "domain:pdfhelper-cdn[.]top",
+        "ip:91.92.242[.]30",
+        "skill:solana-wallet-x"
+    ],
+    "evidence": {
+        "nodes": [
+            {
+                "id": "skill:demo-pdf-helper",
+                "label": "demo-pdf-helper",
+                "type": "Skill",
+                "status": "unknown",
+                "common_infra": false
+            },
+            {
+                "id": "domain:pdfhelper-cdn[.]top",
+                "label": "pdfhelper-cdn[.]top",
+                "type": "Domain",
+                "status": null,
+                "common_infra": false
+            },
+            {
+                "id": "ip:91.92.242[.]30",
+                "label": "91.92.242[.]30",
+                "type": "IP",
+                "status": null,
+                "common_infra": false
+            },
+            {
+                "id": "skill:solana-wallet-x",
+                "label": "solana-wallet-x",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:defi-manager-907",
+                "label": "defi-manager-907",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:airdrop-scanner-542",
+                "label": "airdrop-scanner-542",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:nft-bot-246",
+                "label": "nft-bot-246",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:phantom-tracker-235",
+                "label": "phantom-tracker-235",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:eth-helper-100",
+                "label": "eth-helper-100",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:defi-toolkit-135",
+                "label": "defi-toolkit-135",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:defi-monitor-760",
+                "label": "defi-monitor-760",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:airdrop-monitor-948",
+                "label": "airdrop-monitor-948",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            }
+        ],
+        "edges": [
+            {
+                "source": "skill:demo-pdf-helper",
+                "target": "domain:pdfhelper-cdn[.]top",
+                "type": "CONTACTS"
+            },
+            {
+                "source": "domain:pdfhelper-cdn[.]top",
+                "target": "ip:91.92.242[.]30",
+                "type": "RESOLVES_TO"
+            },
+            {
+                "source": "skill:solana-wallet-x",
+                "target": "ip:91.92.242[.]30",
+                "type": "DOWNLOADS_FROM"
+            },
+            {
+                "source": "skill:defi-manager-907",
+                "target": "ip:91.92.242[.]30",
+                "type": "DOWNLOADS_FROM"
+            },
+            {
+                "source": "skill:airdrop-scanner-542",
+                "target": "ip:91.92.242[.]30",
+                "type": "DOWNLOADS_FROM"
+            },
+            {
+                "source": "skill:nft-bot-246",
+                "target": "ip:91.92.242[.]30",
+                "type": "DOWNLOADS_FROM"
+            },
+            {
+                "source": "skill:phantom-tracker-235",
+                "target": "ip:91.92.242[.]30",
+                "type": "DOWNLOADS_FROM"
+            },
+            {
+                "source": "skill:eth-helper-100",
+                "target": "ip:91.92.242[.]30",
+                "type": "DOWNLOADS_FROM"
+            },
+            {
+                "source": "skill:defi-toolkit-135",
+                "target": "ip:91.92.242[.]30",
+                "type": "DOWNLOADS_FROM"
+            },
+            {
+                "source": "skill:defi-monitor-760",
+                "target": "ip:91.92.242[.]30",
+                "type": "DOWNLOADS_FROM"
+            },
+            {
+                "source": "skill:airdrop-monitor-948",
+                "target": "ip:91.92.242[.]30",
+                "type": "DOWNLOADS_FROM"
+            }
+        ]
+    },
+    "campaign": "ClawHavoc",
+    "checked_at": "2026-10-15T23:29:30Z",
+    "ms": 7
+}

@@ -1,0 +1,145 @@
+{
+    "verdict": "BLOCK",
+    "reason": "shares publisher hightower6eu with 51 known-malicious skills",
+    "route": [
+        "skill:demo-crypto-tracker",
+        "publisher:hightower6eu",
+        "skill:solana-wallet-x"
+    ],
+    "evidence": {
+        "nodes": [
+            {
+                "id": "skill:demo-crypto-tracker",
+                "label": "demo-crypto-tracker",
+                "type": "Skill",
+                "status": "unknown",
+                "common_infra": false
+            },
+            {
+                "id": "publisher:hightower6eu",
+                "label": "hightower6eu",
+                "type": "Publisher",
+                "status": null,
+                "common_infra": false
+            },
+            {
+                "id": "skill:solana-wallet-x",
+                "label": "solana-wallet-x",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:wallet-manager-433",
+                "label": "wallet-manager-433",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:eth-bridge-430",
+                "label": "eth-bridge-430",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:solana-toolkit-349",
+                "label": "solana-toolkit-349",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:wallet-sync-888",
+                "label": "wallet-sync-888",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:wallet-tracker-882",
+                "label": "wallet-tracker-882",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:airdrop-scanner-542",
+                "label": "airdrop-scanner-542",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:defi-bridge-781",
+                "label": "defi-bridge-781",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            },
+            {
+                "id": "skill:nft-bot-246",
+                "label": "nft-bot-246",
+                "type": "Skill",
+                "status": "known_bad",
+                "common_infra": false
+            }
+        ],
+        "edges": [
+            {
+                "source": "skill:demo-crypto-tracker",
+                "target": "publisher:hightower6eu",
+                "type": "PUBLISHED_BY"
+            },
+            {
+                "source": "skill:solana-wallet-x",
+                "target": "publisher:hightower6eu",
+                "type": "PUBLISHED_BY"
+            },
+            {
+                "source": "skill:wallet-manager-433",
+                "target": "publisher:hightower6eu",
+                "type": "PUBLISHED_BY"
+            },
+            {
+                "source": "skill:eth-bridge-430",
+                "target": "publisher:hightower6eu",
+                "type": "PUBLISHED_BY"
+            },
+            {
+                "source": "skill:solana-toolkit-349",
+                "target": "publisher:hightower6eu",
+                "type": "PUBLISHED_BY"
+            },
+            {
+                "source": "skill:wallet-sync-888",
+                "target": "publisher:hightower6eu",
+                "type": "PUBLISHED_BY"
+            },
+            {
+                "source": "skill:wallet-tracker-882",
+                "target": "publisher:hightower6eu",
+                "type": "PUBLISHED_BY"
+            },
+            {
+                "source": "skill:airdrop-scanner-542",
+                "target": "publisher:hightower6eu",
+                "type": "PUBLISHED_BY"
+            },
+            {
+                "source": "skill:defi-bridge-781",
+                "target": "publisher:hightower6eu",
+                "type": "PUBLISHED_BY"
+            },
+            {
+                "source": "skill:nft-bot-246",
+                "target": "publisher:hightower6eu",
+                "type": "PUBLISHED_BY"
+            }
+        ]
+    },
+    "campaign": "ClawHavoc",
+    "checked_at": "2026-10-15T23:29:29Z",
+    "ms": 8
+}

@@ -1,0 +1,6 @@
+skill_name,publisher,expected_verdict,scene,text_file
+demo-crypto-tracker,hightower6eu,BLOCK,1,demo-crypto-tracker.md
+demo-pdf-helper,,ASK,2,demo-pdf-helper.md
+demo-git-tools,gitfan-dev,ALLOW,3,demo-git-tools.md
+demo-weather,weatherly,ALLOW,3,demo-weather.md
+solana-wallet-x,hightower6eu,BLOCK,1,

@@ -1,0 +1,637 @@
+{
+    "nodes": [
+        {
+            "id": "skill:demo-crypto-tracker",
+            "label": "demo-crypto-tracker",
+            "type": "Skill",
+            "status": "unknown",
+            "common_infra": false
+        },
+        {
+            "id": "publisher:hightower6eu",
+            "label": "hightower6eu",
+            "type": "Publisher",
+            "status": null,
+            "common_infra": false
+        },
+        {
+            "id": "skill:solana-wallet-x",
+            "label": "solana-wallet-x",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:wallet-manager-433",
+            "label": "wallet-manager-433",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:eth-bridge-430",
+            "label": "eth-bridge-430",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:solana-toolkit-349",
+            "label": "solana-toolkit-349",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:wallet-sync-888",
+            "label": "wallet-sync-888",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:wallet-tracker-882",
+            "label": "wallet-tracker-882",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:airdrop-scanner-542",
+            "label": "airdrop-scanner-542",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:defi-bridge-781",
+            "label": "defi-bridge-781",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:nft-bot-246",
+            "label": "nft-bot-246",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:wallet-sync-231",
+            "label": "wallet-sync-231",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:phantom-tracker-235",
+            "label": "phantom-tracker-235",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:yield-sync-553",
+            "label": "yield-sync-553",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:solana-bot-474",
+            "label": "solana-bot-474",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:swap-scanner-159",
+            "label": "swap-scanner-159",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:solana-helper-610",
+            "label": "solana-helper-610",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:wallet-helper-551",
+            "label": "wallet-helper-551",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:eth-alerts-292",
+            "label": "eth-alerts-292",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:crypto-helper-650",
+            "label": "crypto-helper-650",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:defi-monitor-760",
+            "label": "defi-monitor-760",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:swap-tracker-855",
+            "label": "swap-tracker-855",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:token-sync-274",
+            "label": "token-sync-274",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:swap-monitor-197",
+            "label": "swap-monitor-197",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:swap-tracker-312",
+            "label": "swap-tracker-312",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:wallet-sync-689",
+            "label": "wallet-sync-689",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:yield-tracker-571",
+            "label": "yield-tracker-571",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:ledger-sync-282",
+            "label": "ledger-sync-282",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:wallet-monitor-155",
+            "label": "wallet-monitor-155",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:yield-toolkit-64",
+            "label": "yield-toolkit-64",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:airdrop-toolkit-489",
+            "label": "airdrop-toolkit-489",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:nft-toolkit-742",
+            "label": "nft-toolkit-742",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:airdrop-manager-679",
+            "label": "airdrop-manager-679",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:eth-scanner-717",
+            "label": "eth-scanner-717",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:wallet-monitor-988",
+            "label": "wallet-monitor-988",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:token-scanner-109",
+            "label": "token-scanner-109",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:defi-alerts-873",
+            "label": "defi-alerts-873",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:airdrop-manager-685",
+            "label": "airdrop-manager-685",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:phantom-bridge-339",
+            "label": "phantom-bridge-339",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:wallet-tracker-588",
+            "label": "wallet-tracker-588",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:yield-helper-842",
+            "label": "yield-helper-842",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:solana-manager-972",
+            "label": "solana-manager-972",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:solana-bridge-77",
+            "label": "solana-bridge-77",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:token-helper-558",
+            "label": "token-helper-558",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:airdrop-manager-944",
+            "label": "airdrop-manager-944",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:swap-bridge-506",
+            "label": "swap-bridge-506",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:defi-tracker-94",
+            "label": "defi-tracker-94",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:yield-scanner-125",
+            "label": "yield-scanner-125",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:swap-monitor-885",
+            "label": "swap-monitor-885",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:solana-monitor-180",
+            "label": "solana-monitor-180",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:eth-scanner-654",
+            "label": "eth-scanner-654",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:token-monitor-206",
+            "label": "token-monitor-206",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        },
+        {
+            "id": "skill:crypto-bot-550",
+            "label": "crypto-bot-550",
+            "type": "Skill",
+            "status": "known_bad",
+            "common_infra": false
+        }
+    ],
+    "edges": [
+        {
+            "source": "skill:demo-crypto-tracker",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:solana-wallet-x",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:wallet-manager-433",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:eth-bridge-430",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:solana-toolkit-349",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:wallet-sync-888",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:wallet-tracker-882",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:airdrop-scanner-542",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:defi-bridge-781",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:nft-bot-246",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:wallet-sync-231",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:phantom-tracker-235",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:yield-sync-553",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:solana-bot-474",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:swap-scanner-159",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:solana-helper-610",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:wallet-helper-551",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:eth-alerts-292",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:crypto-helper-650",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:defi-monitor-760",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:swap-tracker-855",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:token-sync-274",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:swap-monitor-197",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:swap-tracker-312",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:wallet-sync-689",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:yield-tracker-571",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:ledger-sync-282",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:wallet-monitor-155",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:yield-toolkit-64",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:airdrop-toolkit-489",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:nft-toolkit-742",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:airdrop-manager-679",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:eth-scanner-717",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:wallet-monitor-988",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:token-scanner-109",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:defi-alerts-873",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:airdrop-manager-685",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:phantom-bridge-339",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:wallet-tracker-588",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:yield-helper-842",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:solana-manager-972",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:solana-bridge-77",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:token-helper-558",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:airdrop-manager-944",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:swap-bridge-506",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:defi-tracker-94",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:yield-scanner-125",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:swap-monitor-885",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:solana-monitor-180",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:eth-scanner-654",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:token-monitor-206",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        },
+        {
+            "source": "skill:crypto-bot-550",
+            "target": "publisher:hightower6eu",
+            "type": "PUBLISHED_BY"
+        }
+    ]
+}

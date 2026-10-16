@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/ABSOLUTE/PATH/bouncer/.venv/bin/python /ABSOLUTE/PATH/bouncer/backend/hooks/hook_bouncer.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

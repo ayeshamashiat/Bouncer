@@ -1,0 +1,47 @@
+{
+    "verdict": "ALLOW",
+    "reason": "no link to any known-malicious skill (shared infrastructure like github.com is ignored)",
+    "route": [
+        "skill:demo-git-tools"
+    ],
+    "evidence": {
+        "nodes": [
+            {
+                "id": "skill:demo-git-tools",
+                "label": "demo-git-tools",
+                "type": "Skill",
+                "status": "unknown",
+                "common_infra": false
+            },
+            {
+                "id": "publisher:gitfan-dev",
+                "label": "gitfan-dev",
+                "type": "Publisher",
+                "status": null,
+                "common_infra": false
+            },
+            {
+                "id": "domain:github[.]com",
+                "label": "github[.]com",
+                "type": "Domain",
+                "status": null,
+                "common_infra": true
+            }
+        ],
+        "edges": [
+            {
+                "source": "skill:demo-git-tools",
+                "target": "publisher:gitfan-dev",
+                "type": "PUBLISHED_BY"
+            },
+            {
+                "source": "skill:demo-git-tools",
+                "target": "domain:github[.]com",
+                "type": "CONTACTS"
+            }
+        ]
+    },
+    "campaign": null,
+    "checked_at": "2026-10-15T23:29:29Z",
+    "ms": 11
+}

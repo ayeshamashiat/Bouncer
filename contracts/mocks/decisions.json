@@ -1,0 +1,42 @@
+[
+    {
+        "id": "dec_0004",
+        "kind": "skill",
+        "name": "demo-pdf-helper",
+        "verdict": "ASK",
+        "reason": "linked in 3 hops to known-malicious skill solana-wallet-x via pdfhelper-cdn[.]top -> 91.92.242[.]30; IP 91.92.242[.]30 is used by 17 known-malicious skills",
+        "campaign": "ClawHavoc",
+        "source": "ui",
+        "checked_at": "2026-10-15T23:29:30Z"
+    },
+    {
+        "id": "dec_0003",
+        "kind": "skill",
+        "name": "solana-wallet-x",
+        "verdict": "BLOCK",
+        "reason": "already known malicious (campaign ClawHavoc)",
+        "campaign": "ClawHavoc",
+        "source": "mcp",
+        "checked_at": "2026-10-15T23:29:29Z"
+    },
+    {
+        "id": "dec_0002",
+        "kind": "skill",
+        "name": "demo-git-tools",
+        "verdict": "ALLOW",
+        "reason": "no link to any known-malicious skill (shared infrastructure like github.com is ignored)",
+        "campaign": null,
+        "source": "hook",
+        "checked_at": "2026-10-15T23:29:29Z"
+    },
+    {
+        "id": "dec_0001",
+        "kind": "skill",
+        "name": "demo-crypto-tracker",
+        "verdict": "BLOCK",
+        "reason": "shares publisher hightower6eu with 51 known-malicious skills",
+        "campaign": "ClawHavoc",
+        "source": "hook",
+        "checked_at": "2026-10-15T23:29:29Z"
+    }
+]
