@@ -66,7 +66,7 @@ an **evidence route** through the graph that a human can check.
 
 ---
 
-## Why the graph does the real work (rule 3)
+## Why the graph does the real work 
 
 Take FalkorDB out and Bouncer becomes a blocklist: it can only recognise names it has already seen.
 Everything that makes it useful is a graph operation:
