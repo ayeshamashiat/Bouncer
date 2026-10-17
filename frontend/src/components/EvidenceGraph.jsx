@@ -91,7 +91,9 @@ export default function EvidenceGraph({ nodes = [], edges = [], route = [], heig
           shape: SHAPES[n.type] || 'ellipse',
           colour: colourOf(n),
         },
-        classes: [n.common_infra ? 'common' : '', onRoute.has(n.id) ? 'route' : '', n.id === route[0] ? 'start' : '']
+        // In big graphs only hubs (accounts, servers, IPs) and route nodes keep their labels.
+        classes: [n.common_infra ? 'common' : '', onRoute.has(n.id) ? 'route' : '', n.id === route[0] ? 'start' : '',
+          shown.nodes.length > 60 && n.type === 'Skill' && !onRoute.has(n.id) ? 'nolabel' : '']
           .filter(Boolean)
           .join(' '),
       })),
@@ -105,7 +107,7 @@ export default function EvidenceGraph({ nodes = [], edges = [], route = [], heig
       container: ref.current,
       elements,
       wheelSensitivity: 0.2,
-      minZoom: 0.2,
+      minZoom: 0.05,
       maxZoom: 3,
       style: [
         {
@@ -116,7 +118,7 @@ export default function EvidenceGraph({ nodes = [], edges = [], route = [], heig
             label: 'data(label)',
             color: c.text,
             'font-size': 10,
-            'font-family': 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+            'font-family': 'Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
             'text-valign': 'bottom',
             'text-margin-y': 4,
             'text-background-color': c.bg,
@@ -130,6 +132,7 @@ export default function EvidenceGraph({ nodes = [], edges = [], route = [], heig
         },
         { selector: 'node.route', style: { width: 30, height: 30, 'border-color': c.accent, 'border-width': 3, 'font-weight': 700, 'z-index': 10 } },
         { selector: 'node.start', style: { width: 36, height: 36, 'font-size': 12 } },
+        { selector: 'node.nolabel', style: { label: '', width: 14, height: 14 } },
         { selector: 'node.common', style: { opacity: 0.4, 'border-style': 'dashed', 'border-color': c.text, 'border-width': 2 } },
         {
           selector: 'edge',
@@ -162,12 +165,15 @@ export default function EvidenceGraph({ nodes = [], edges = [], route = [], heig
       layout: {
         name: 'cose',
         animate: false,
-        randomize: false,
-        nodeRepulsion: () => 9000,
-        idealEdgeLength: () => 70,
+        // big neighbourhoods (campaign view) need a tighter layout or the fit zooms out to a speck
+        randomize: shown.nodes.length > 60,
+        nodeRepulsion: () => (shown.nodes.length > 60 ? 4500 : 9000),
+        idealEdgeLength: () => (shown.nodes.length > 60 ? 45 : 70),
         padding: 30,
       },
     })
+    // Canvas labels don't re-render when a web font finishes loading; redraw once it has.
+    document.fonts?.ready.then(() => !cy.destroyed() && cy.style().update())
     if (onNodeClick) cy.on('tap', 'node', (evt) => onNodeClick(evt.target.id()))
     return () => cy.destroy()
   }, [shown, route, dark, onNodeClick])

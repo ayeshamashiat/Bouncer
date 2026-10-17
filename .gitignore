@@ -6,3 +6,7 @@ __pycache__/
 node_modules/
 frontend/dist/
 backend/eval_results.json
+docs/DEMO_SCRTIPT.md
+
+# Demo video sources and renders (kept out of the repo)
+video/

@@ -1,0 +1,53 @@
+# Render Blueprint: Dashboard -> New -> Blueprint -> pick this repo.
+# Three services: FalkorDB (private, with a disk), the API, and the website.
+services:
+  # FalkorDB graph database. Private: only the API can reach it, not the internet.
+  - type: pserv
+    name: bouncer-falkordb
+    runtime: image
+    image:
+      url: docker.io/falkordb/falkordb-server:latest
+    plan: starter
+    disk:
+      name: falkordb-data
+      mountPath: /var/lib/falkordb/data   # where the image's run.sh tells redis to save
+      sizeGB: 1
+
+  # FastAPI backend. On first start it sees an empty graph and loads data/ by itself.
+  - type: web
+    name: bouncer-api
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn api:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: FALKORDB_HOST
+        fromService:
+          type: pserv
+          name: bouncer-falkordb
+          property: host
+      - key: FALKORDB_PORT
+        value: "6379"
+      - key: THREAT_GRAPH
+        value: threat
+      - key: CORS_ORIGINS          # the website's URL, e.g. https://bouncer-web.onrender.com
+        sync: false
+
+  # React website, served as static files (free).
+  - type: web
+    name: bouncer-web
+    runtime: static
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: frontend/dist
+    routes:
+      - type: rewrite              # let /check/<name> etc. load the app
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL          # the API's URL, e.g. https://bouncer-api.onrender.com
+        sync: false
+      - key: VITE_USE_MOCKS
+        value: "false"

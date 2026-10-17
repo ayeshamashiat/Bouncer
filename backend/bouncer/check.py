@@ -92,29 +92,35 @@ def check_install(kind: str, name: str, source: str = "ui", write_back: bool = T
 
 
 _WRITE_DECISION = """
+MERGE (m:Meta {key: 'decisions'})
+ON CREATE SET m.n = 0
+SET m.n = m.n + 1
+WITH m.n AS seq
 OPTIONAL MATCH (s:Skill {name: $name})
-CREATE (d:Decision {id: $id, kind: $kind, name: $name, verdict: $verdict, reason: $reason,
-                    route: $route, source: $source, at: $at, campaign: $campaign, ms: $ms})
-WITH d, s WHERE s IS NOT NULL
-CREATE (d)-[:ABOUT]->(s)
+CREATE (d:Decision {id: 'dec_' + right('0000' + toString(seq), 4), seq: seq, kind: $kind, name: $name,
+                    verdict: $verdict, reason: $reason, route: $route, source: $source, at: $at,
+                    campaign: $campaign, ms: $ms})
+WITH d, s
+FOREACH (_ IN CASE WHEN s IS NULL THEN [] ELSE [1] END | CREATE (d)-[:ABOUT]->(s))
+RETURN d.id
 """
 
 
 def write_decision(g, kind, name, source, result) -> str:
-    n = g.query("MATCH (d:Decision) RETURN count(d)").result_set[0][0]
-    dec_id = f"dec_{n + 1:04d}"
-    g.query(_WRITE_DECISION, {
-        "id": dec_id, "kind": kind, "name": name, "verdict": result["verdict"],
+    # The id comes from a counter incremented inside the same query. FalkorDB runs writes one at a
+    # time, so two checks arriving together can't get the same id (counting Decision nodes could).
+    rows = g.query(_WRITE_DECISION, {
+        "kind": kind, "name": name, "verdict": result["verdict"],
         "reason": result["reason"], "route": result["route"], "source": source,
         "at": result["checked_at"], "campaign": result["campaign"] or "", "ms": result["ms"],
-    })
-    return dec_id
+    }).result_set
+    return rows[0][0]
 
 
 _LIST_DECISIONS = """
 MATCH (d:Decision)
 RETURN d.id, d.kind, d.name, d.verdict, d.reason, d.campaign, d.source, d.at
-ORDER BY d.at DESC, d.id DESC LIMIT $limit
+ORDER BY d.seq DESC LIMIT $limit
 """
 
 
@@ -131,7 +137,7 @@ def list_decisions(limit: int = 50, g=None) -> list[dict]:
 _LAST_DECISION = """
 MATCH (d:Decision {name: $name})
 RETURN d.verdict, d.reason, d.route, d.campaign, d.at, d.source
-ORDER BY d.at DESC, d.id DESC LIMIT 1
+ORDER BY d.seq DESC LIMIT 1
 """
 
 

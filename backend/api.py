@@ -3,6 +3,10 @@
 Run from backend/:  uvicorn api:app --reload
 """
 import os
+import sys
+import time
+from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Literal
 
 from fastapi import FastAPI, Header, Query, Request
@@ -16,12 +20,42 @@ from bouncer import evaluate, queries
 from bouncer.check import KINDS, SOURCES, check_install, list_decisions
 from bouncer.db import get_graph, graph_name
 from bouncer.investigator import investigate
+from bouncer.loaders import load_all
 from bouncer.serialize import graph_json, node_id
 
-app = FastAPI(title="Bouncer", version="1.0")
+DATA_DIR = Path(os.getenv("BOUNCER_DATA_DIR", Path(__file__).resolve().parents[1] / "data"))
+
+
+def ensure_loaded(attempts: int = 20) -> None:
+    """A fresh database (e.g. on first deploy) is empty: load the threat data once.
+    Never reloads a graph that already has skills, so recorded decisions survive restarts."""
+    for i in range(attempts):
+        try:
+            g = get_graph()
+            try:
+                skills = g.ro_query("MATCH (s:Skill) RETURN count(s)").result_set[0][0]
+            except Exception:
+                skills = 0  # graph never written yet
+            if skills == 0:
+                print(f"[bouncer] graph '{graph_name()}' is empty, loading {DATA_DIR}", file=sys.stderr)
+                load_all(DATA_DIR, g)
+            return
+        except Exception as e:  # FalkorDB may still be starting
+            print(f"[bouncer] waiting for FalkorDB ({e}); retry {i + 1}/{attempts}", file=sys.stderr)
+            time.sleep(3)
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    if os.getenv("BOUNCER_AUTOLOAD", "1") == "1":
+        ensure_loaded()
+    yield
+
+
+app = FastAPI(title="Bouncer", version="1.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[o.strip() for o in os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",") if o.strip()],
+    allow_origins=[o.strip().rstrip("/") for o in os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",") if o.strip()],
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
