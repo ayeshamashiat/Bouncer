@@ -337,8 +337,9 @@ The investigator reads attacker-written text, so it's built to resist prompt inj
 ```bash
 git clone <this repo> bouncer && cd bouncer
 
-# 1. FalkorDB (graph on port 6379, graph browser on http://localhost:3000)
-docker run -d --name falkordb -p 6379:6379 -p 3000:3000 falkordb/falkordb:latest
+# 1. FalkorDB 6.0.1 (graph on port 6379, graph browser on http://localhost:3000).
+#    Use 6.0.1, not "latest": "latest" is currently the older 4.22 line and gives wrong path results.
+docker run -d --name falkordb -p 6379:6379 -p 3000:3000 falkordb/falkordb:6.0.1
 
 # 2. Python environment and settings
 python3 -m venv .venv

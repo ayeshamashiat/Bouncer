@@ -1,0 +1,9 @@
+.git
+.venv
+.env
+**/node_modules
+**/__pycache__
+frontend/dist
+backend/eval_results.json
+video
+docs/screenshots

@@ -6,7 +6,7 @@ services:
     name: bouncer-falkordb
     runtime: image
     image:
-      url: docker.io/falkordb/falkordb-server:latest
+      url: docker.io/falkordb/falkordb:6.0.1   # pinned: 'latest' is the older 4.22 line
     plan: starter
     disk:
       name: falkordb-data

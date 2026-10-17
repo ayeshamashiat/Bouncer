@@ -12,7 +12,7 @@ from typing import Literal
 from fastapi import FastAPI, Header, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -250,3 +250,18 @@ def investigate_endpoint(req: InvestigateRequest):
 @app.get("/api/eval", response_model=EvalResponse)
 def eval_results(refresh: bool = False):
     return evaluate.load_or_run(force=refresh)
+
+
+# ---------------------------------------------------------------- optional: serve the built website
+# Set FRONTEND_DIST (e.g. in the single-container deploy) and the API also serves the React app,
+# so the site and API share one URL. Registered last, so every /api route above wins.
+_DIST = Path(os.getenv("FRONTEND_DIST", "")) if os.getenv("FRONTEND_DIST") else None
+if _DIST and (_DIST / "index.html").is_file():
+    @app.get("/{path:path}", include_in_schema=False)
+    def spa(path: str):
+        if path.startswith("api/"):
+            raise ApiError(404, "not_found", f"No endpoint /{path}")
+        f = (_DIST / path).resolve()
+        if path and f.is_file() and _DIST.resolve() in f.parents:
+            return FileResponse(f)
+        return FileResponse(_DIST / "index.html")   # client-side routes like /check/<name>
