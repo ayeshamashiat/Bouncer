@@ -12,6 +12,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from .db import get_graph, graph_name
+from .categories import categories_for
 from .defang import (LIVE_IP_RE, LIVE_URL_RE, canon_domain, canon_ip, canon_payload,
                      is_common_infra_domain)
 from .schema import create_indexes
@@ -308,8 +309,20 @@ def load_all(data_dir, g=None, reset: bool = False) -> dict:
         if rows:
             g.query(q, {"rows": rows})
 
+    # Categories (for suggesting safer alternatives); never used as evidence
+    names = [r[0] for r in g.query("MATCH (s:Skill) RETURN s.name").result_set]
+    g.query(_CATEGORY_QUERY, {"rows": [{"name": n, "cats": categories_for(n)} for n in names if categories_for(n)]})
+
     return counts(g)
 
+
+_CATEGORY_QUERY = """
+UNWIND $rows AS r
+MATCH (s:Skill {name: r.name})
+UNWIND r.cats AS c
+MERGE (k:Category {name: c})
+MERGE (s)-[:IN_CATEGORY]->(k)
+"""
 
 _INFRA_QUERIES = {
     ("domain", False): """

@@ -87,6 +87,12 @@ class CheckRequest(BaseModel):
     source: str | None = None
 
 
+class Alternative(BaseModel):
+    name: str
+    category: str
+    reason: str
+
+
 class CheckResponse(BaseModel):
     verdict: Literal["ALLOW", "ASK", "BLOCK"]
     reason: str
@@ -95,6 +101,7 @@ class CheckResponse(BaseModel):
     campaign: str | None
     checked_at: str
     ms: int
+    alternatives: list[Alternative] = []
 
 
 class DecisionItem(BaseModel):

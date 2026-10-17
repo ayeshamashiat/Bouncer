@@ -39,6 +39,19 @@ export default function VerdictCard({ result, name }) {
           ))}
         </ol>
       )}
+      {result.alternatives?.length > 0 && (
+        <div className="alternatives">
+          <div className="eyebrow">Safer alternatives</div>
+          <p className="muted small">Trusted skills in the same category that Bouncer checked and would allow.</p>
+          <div className="chips">
+            {result.alternatives.map((a) => (
+              <Link key={a.name} to={`/check/${encodeURIComponent(a.name)}`} className="chip chip-alt" title={a.reason}>
+                ✓ {a.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   )
 }

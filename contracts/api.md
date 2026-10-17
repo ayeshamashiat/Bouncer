@@ -57,7 +57,10 @@ POST /api/check   { "kind": "skill", "name": "crypto-tracker-pro", "source": "ui
   "evidence": { "nodes": [Node, ...], "edges": [Edge, ...] },   // includes every node in route
   "campaign": "ClawHavoc",                          // or null
   "checked_at": "2026-10-16T10:22:05Z",             // ISO 8601, UTC
-  "ms": 12 }
+  "ms": 12,
+  "alternatives": [                                 // only for BLOCK / ASK; [] for ALLOW
+    { "name": "aave-liquidation-monitor", "category": "finance & crypto",
+      "reason": "trusted skill in the same category (finance & crypto), no link to known attacks" } ] }
 
 GET /api/campaigns
 -> [ { "campaign_id": 0, "name": "ClawHavoc", "size": 41, "known_bad": 29,

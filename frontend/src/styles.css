@@ -167,6 +167,11 @@ h3 { font-size: 1rem; font-weight: 600; margin: 0; }
   background: var(--surface); border: 2px solid var(--accent); }
 .route-kind { font-size: 0.72rem; color: var(--muted); min-width: 66px; font-family: var(--font); }
 
+.alternatives { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+.alternatives p { margin: 0; }
+.chip-alt { color: var(--ok); border-color: #bbf7d0; background: var(--ok-soft); text-decoration: none; }
+.chip-alt:hover { border-color: var(--ok); text-decoration: none; }
+
 /* graph */
 .graph-wrap { display: flex; flex-direction: column; gap: 12px; }
 .graph { width: 100%; border-radius: 10px; background: var(--bg);

@@ -207,6 +207,7 @@ are evidence. Dotted arrows are record-keeping and are never followed when looki
 | `Report` | The public report each fact came from | url |
 | `Finding` | What the investigator extracted from a skill's text | id |
 | `Decision` | Every verdict Bouncer has given (audit trail, feeds the live view) | id |
+| `Category` | What a skill is for (finance & crypto, git & code, documents…), from keywords in its name. Used only to suggest alternatives | name |
 
 | Relationship | Meaning | Evidence? |
 |---|---|---|
@@ -218,6 +219,7 @@ are evidence. Dotted arrows are record-keeping and are never followed when looki
 | `PART_OF` | Skill → its campaign (a label, not evidence) | ❌ |
 | `SOURCED_FROM` | Any fact → the report it came from | ❌ |
 | `ABOUT` | Decision / Finding → the skill | ❌ |
+| `IN_CATEGORY` | Skill → its category (for suggestions, never evidence) | ❌ |
 
 **Three design choices that matter:**
 - **One node per clue.** The loader uses `MERGE` with one canonical spelling, so 79 skills from `hightower6eu`
@@ -320,6 +322,22 @@ CREATE (d)-[:ABOUT]->(s)
 | Never seen before | **ASK**: unknown is not the same as safe |
 | Known, and no link once common sites are ignored | **ALLOW** |
 
+### Safer alternatives when something is blocked
+Blocking alone leaves the user stuck, so for every BLOCK or ASK Bouncer also suggests what to install instead.
+It walks the graph `blocked skill → Category ← trusted skill` and **re-checks every candidate**; only skills
+Bouncer itself would ALLOW are suggested. The suggestions come from the graph, not from an AI, so a malicious
+skill can't talk its way into the list. They show on the website's verdict card, in the hook's message to
+Claude Code (so the agent can offer them), and in the MCP `check_install` result.
+
+```cypher
+MATCH (k:Category) WHERE k.name IN $cats
+WITH k
+MATCH (alt:Skill)-[:IN_CATEGORY]->(k)
+WITH alt, collect(k.name) AS shared
+WHERE alt.status = 'trusted' AND alt.name <> $exclude
+RETURN alt.name, shared ORDER BY size(shared) DESC, alt.name LIMIT $limit
+```
+
 ### Why a malicious skill can't talk its way out
 The investigator reads attacker-written text, so it's built to resist prompt injection:
 - The AI only fills in a fixed form: `{"domains", "urls", "ips", "commands"}`. It is never asked "is this safe?".
@@ -377,6 +395,13 @@ Bouncer is unreachable, the hook asks you rather than allowing the install.
 echo '{"tool_name":"Bash","tool_input":{"command":"clawhub install demo-crypto-tracker"}}' \
   | .venv/bin/python backend/hooks/hook_bouncer.py
 ```
+
+### Deploy for free (no card): Render
+The repo has a [`Dockerfile`](Dockerfile) that runs FalkorDB, the API and the website in one container on one
+URL, and a [`render.yaml`](render.yaml) that deploys it on Render's **free** plan. In Render, choose
+**New → Blueprint** and pick this repo. Free services sleep after about 15 minutes idle and take about a minute
+to wake. The graph is rebuilt from `data/` on every start. Try the container locally with
+`docker build -t bouncer . && docker run -p 7860:7860 bouncer`, then open http://localhost:7860.
 
 ### Let agents ask first (MCP)
 ```bash

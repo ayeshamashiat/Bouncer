@@ -33,9 +33,13 @@ def lookup(name: str, g=None):
 # first length that finds anything keeps every check in milliseconds.
 # `bad <> s` stops a skill matching itself; Decision/Finding nodes are never
 # reached because ABOUT is not in the relationship list.
+# The status filter sits in a WITH *after* the path MATCH on purpose: FalkorDB 4.22 (what the
+# 'latest' Docker tag currently points to) returns no rows when a variable-length path's end node
+# is filtered inline or in the MATCH's WHERE. This form gives the same answer on 4.22 and 6.x.
 _Q2_TEMPLATE = """
-MATCH p = (s:Skill {name: $name})-[:%s*%d..%d]-(bad:Skill {status: 'known_bad'})
-WHERE bad <> s AND none(n IN nodes(p) WHERE n:CommonInfra)
+MATCH p = (s:Skill {name: $name})-[:%s*%d..%d]-(bad:Skill)
+WITH p, s, bad
+WHERE bad.status = 'known_bad' AND bad <> s AND none(n IN nodes(p) WHERE n:CommonInfra)
 WITH p, bad LIMIT 1
 RETURN p, bad.campaign
 """
@@ -192,6 +196,27 @@ def neighbourhood(start_node, hops: int = 2, limit: int = 150, g=None):
         for e in p.edges():
             edges[e.id] = e
     return list(nodes.values()), list(edges.values())
+
+
+# ---------------------------------------------------------------- Q6 safer alternatives
+# blocked skill -> Category <- trusted skill. Ranked by how many categories they share.
+Q6_ALTERNATIVES = """
+MATCH (k:Category) WHERE k.name IN $cats
+WITH k
+MATCH (alt:Skill)-[:IN_CATEGORY]->(k)
+WITH alt, collect(k.name) AS shared
+WHERE alt.status = 'trusted' AND alt.name <> $exclude
+RETURN alt.name, shared
+ORDER BY size(shared) DESC, alt.name
+LIMIT $limit
+"""
+
+
+def alternatives(cats: list[str], exclude: str, limit: int = 12, g=None) -> list[tuple[str, list[str]]]:
+    if not cats:
+        return []
+    g = g or get_graph()
+    return [(r[0], r[1]) for r in g.ro_query(Q6_ALTERNATIVES, {"cats": cats, "exclude": exclude, "limit": limit}).result_set]
 
 
 # ---------------------------------------------------------------- misc

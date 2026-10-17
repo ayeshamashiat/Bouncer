@@ -48,6 +48,9 @@ def build_reason(kind: str, name: str, r: dict) -> str:
     if len(r.get("route") or []) > 1:
         parts.append("Evidence path: " + " -> ".join(r["route"]) + ".")
     parts.append(f"({r.get('ms', '?')} ms)")
+    alts = [a["name"] for a in r.get("alternatives") or []]
+    if alts:
+        parts.append("Safer alternatives (trusted, same category, no link to known attacks): " + ", ".join(alts) + ".")
     return ascii_only(" ".join(parts))
 
 

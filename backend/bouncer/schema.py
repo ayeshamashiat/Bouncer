@@ -16,6 +16,7 @@ KEY_PROPERTY = {
     "Report": "url",
     "Finding": "id",
     "Decision": "id",
+    "Category": "name",
 }
 
 # Relationships that count as evidence. Used by guilt-by-connection paths,

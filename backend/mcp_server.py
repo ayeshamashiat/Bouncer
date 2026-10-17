@@ -42,13 +42,16 @@ def check_install(kind: str, name: str) -> dict:
     Returns verdict (ALLOW | ASK | BLOCK), a one-line reason, the evidence route through
     the threat graph and the campaign name if any. If the verdict is BLOCK, do not install
     and tell the user why. If ASK, show the reason to the user and wait for their decision.
+    When blocked, `alternatives` lists trusted skills in the same category that Bouncer checked
+    and would allow: offer those to the user instead. Never suggest anything not in that list.
     """
     if kind not in ("skill", "mcp", "package"):
         kind = "skill"
     log.info("check_install %s %s", kind, name)
     r = _check(kind, name, source="mcp")
     return {"verdict": r["verdict"], "reason": r["reason"], "route": r["route"],
-            "campaign": r["campaign"], "checked_at": r["checked_at"], "ms": r["ms"]}
+            "campaign": r["campaign"], "checked_at": r["checked_at"], "ms": r["ms"],
+            "alternatives": r.get("alternatives", [])}
 
 
 @mcp.tool()

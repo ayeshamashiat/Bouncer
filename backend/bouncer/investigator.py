@@ -18,6 +18,7 @@ from datetime import datetime, timezone
 
 from .check import check_install
 from .db import get_graph
+from .categories import categories_for
 from .defang import canon_domain, canon_ip, is_common_infra_domain, refang
 
 SCHEMA_KEYS = ("domains", "urls", "ips", "commands")
@@ -218,6 +219,8 @@ def investigate(name: str, text: str, g=None) -> dict:
     n0, e0 = _counts(g)
 
     g.query(_ENSURE_SKILL, {"name": name, "at": at})
+    g.query("UNWIND $cats AS c MATCH (s:Skill {name: $name}) MERGE (k:Category {name: c}) MERGE (s)-[:IN_CATEGORY]->(k)",
+            {"name": name, "cats": categories_for(name)})
     for d in shown["domains"]:
         common = is_common_infra_domain(d) or g.query(_IS_COMMON, {"value": d}).result_set[0][0] > 0
         g.query(_LINK_COMMON_DOMAIN if common else _LINK_DOMAIN, {"name": name, "value": d, "at": at})

@@ -7,6 +7,7 @@ import time
 from datetime import datetime, timezone
 
 from . import queries, rules
+from .categories import categories_for
 from .db import get_graph
 from .serialize import graph_json, node_id, path_json
 
@@ -31,7 +32,8 @@ def _describe_clue(n) -> tuple[str, str]:
     return label, value
 
 
-def check_install(kind: str, name: str, source: str = "ui", write_back: bool = True, g=None) -> dict:
+def check_install(kind: str, name: str, source: str = "ui", write_back: bool = True, g=None,
+                  suggest: bool = True) -> dict:
     t0 = time.perf_counter()
     g = g or get_graph()
     skill, campaign = queries.lookup(name, g)
@@ -85,10 +87,26 @@ def check_install(kind: str, name: str, source: str = "ui", write_back: bool = T
     checked_at = now_iso()
     ms = round((time.perf_counter() - t0) * 1000)
     result = {"verdict": verdict, "reason": reason, "route": route, "evidence": evidence,
-              "campaign": campaign or None, "checked_at": checked_at, "ms": ms}
+              "campaign": campaign or None, "checked_at": checked_at, "ms": ms,
+              "alternatives": suggest_alternatives(name, g) if suggest and verdict != rules.ALLOW else []}
     if write_back:
         write_decision(g, kind, name, source, result)
     return result
+
+
+def suggest_alternatives(name: str, g=None, limit: int = 3) -> list[dict]:
+    """Trusted skills in the same category that Bouncer itself would ALLOW right now.
+    Comes only from the graph: nothing is suggested that wasn't re-checked."""
+    g = g or get_graph()
+    out = []
+    for alt, shared in queries.alternatives(categories_for(name), exclude=name, g=g):
+        if check_install("skill", alt, write_back=False, g=g, suggest=False)["verdict"] == rules.ALLOW:
+            cat = ", ".join(shared)
+            out.append({"name": alt, "category": cat,
+                        "reason": f"trusted skill in the same category ({cat}), no link to known attacks"})
+            if len(out) == limit:
+                break
+    return out
 
 
 _WRITE_DECISION = """

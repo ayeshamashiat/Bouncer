@@ -141,5 +141,22 @@
     },
     "campaign": "ClawHavoc",
     "checked_at": "2026-10-15T23:29:29Z",
-    "ms": 8
+    "ms": 8,
+    "alternatives": [
+        {
+            "name": "31third-safe-rebalancer-simple",
+            "category": "finance & crypto",
+            "reason": "trusted skill in the same category (finance & crypto), no link to known attacks"
+        },
+        {
+            "name": "a-share-real-time-data",
+            "category": "finance & crypto",
+            "reason": "trusted skill in the same category (finance & crypto), no link to known attacks"
+        },
+        {
+            "name": "aave-liquidation-monitor",
+            "category": "finance & crypto",
+            "reason": "trusted skill in the same category (finance & crypto), no link to known attacks"
+        }
+    ]
 }

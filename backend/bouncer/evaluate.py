@@ -49,12 +49,12 @@ def run(seeds=SEEDS, hide_fraction=HIDE_FRACTION) -> dict:
 
         graph_caught = blocklist_caught = false_alarms = 0
         for name in hidden:
-            r = check_install("skill", name, write_back=False, g=g)
+            r = check_install("skill", name, write_back=False, g=g, suggest=False)
             total_ms += r["ms"]; n_checks += 1
             graph_caught += r["verdict"] in ("ASK", "BLOCK")
             blocklist_caught += name in blocklist
         for name in legit:
-            r = check_install("skill", name, write_back=False, g=g)
+            r = check_install("skill", name, write_back=False, g=g, suggest=False)
             total_ms += r["ms"]; n_checks += 1
             false_alarms += r["verdict"] in ("ASK", "BLOCK")
         splits.append({"seed": seed, "hidden": len(hidden), "blocklist_caught": blocklist_caught,
