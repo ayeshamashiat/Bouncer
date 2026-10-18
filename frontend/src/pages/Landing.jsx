@@ -3,8 +3,26 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { LINKS } from '../links.js'
 import { GitHubIcon } from '../components/common.jsx'
+import { getEval } from '../api.js'
 
 const LIVE = LINKS.live || 'https://bouncer-c74v.onrender.com'
+const pct = (x) => `${Math.round(x * 100)}%`
+
+// Where the graph's facts come from. Counts are for data/ (see data/sources.md for every row's source).
+const SOURCES = [
+  ['Antiy CERT', 'https://www.antiy.net/p/clawhavoc-analysis-of-large-scale-poisoning-campaign-targeting-the-openclaw-skill-market-for-ai-agents/',
+    'The 12 ClawHavoc accounts and their counts, 23 skill names, the C2 server, 5 IPs, malware hashes, timeline'],
+  ['OpenSourceMalware', 'https://opensourcemalware.com/blog/malicious-clawhub-skills-target-openclaw-users',
+    'Which account published which skill, and the payload each one downloads'],
+  ['Snyk', 'https://snyk.io/articles/clawdhub-malicious-campaign-ai-agent-skills/',
+    'The clawhub typosquats by zaycv on the ClawHavoc C2, and a fake Google skill'],
+  ['Unit 42 (Palo Alto Networks)', 'https://unit42.paloaltonetworks.com/openclaw-ai-supply-chain-risk/',
+    '11 skills from June 2026, a new stealer and C2, Telegram exfiltration'],
+  ['Koi Security · The Hacker News · PolySwarm · ClawHub issue #152', 'https://thehackernews.com/2026/02/researchers-find-341-malicious-clawhub.html',
+    'The original disclosure, audit numbers, and individual attributions'],
+  ['VoltAgent/awesome-openclaw-skills', 'https://github.com/VoltAgent/awesome-openclaw-skills',
+    '131 legitimate skills, for measuring false alarms'],
+]
 
 // Adds .in to the element once it scrolls into view (once). Reduced-motion users get everything at once via CSS.
 function useReveal(threshold = 0, margin = '0px 0px -12% 0px') {
@@ -195,6 +213,14 @@ const HOOK_JSON = `{
   }
 }`
 
+function useEvalNumbers() {
+  const [ev, setEv] = useState(null)
+  useEffect(() => {
+    getEval().then(setEv).catch(() => {})
+  }, [])
+  return ev
+}
+
 function Install() {
   const [tab, setTab] = useState('hook')
   const tabs = [['hook', 'Claude Code hook'], ['docker', 'Run it yourself'], ['mcp', 'MCP server']]
@@ -265,6 +291,7 @@ function Install() {
 
 // ---------------------------------------------------------------- page
 export default function Landing() {
+  const ev = useEvalNumbers()
   return (
     <div className="landing">
       <section className="hero">
@@ -378,9 +405,9 @@ Install the core engine first:
           </Link>
         </div>
         <div className="numbers numbers-3">
-          <div><b>95%</b><span>of hidden malicious skills linked back to their campaign</span></div>
-          <div><b>0%</b><span>found by a blocklist on the same test</span></div>
-          <div><b>~5 ms</b><span>per check, with the path that proves it</span></div>
+          <div><b>{ev ? pct(ev.recall) : '92%'}</b><span>of hidden malicious skills linked back to their campaign</span></div>
+          <div><b>{ev ? pct(ev.blocklist_recall) : '0%'}</b><span>found by a blocklist on the same test</span></div>
+          <div><b>{ev ? `${pct(ev.allowed_rate ?? 0)}` : '0%'}</b><span>let through: the rest are held for a human</span></div>
         </div>
         <p className="muted small"><Link to="/results">How we measured this →</Link> · <Link to="/campaigns">Campaigns found by the WCC algorithm →</Link> · <Link to="/feed">Live install feed →</Link></p>
       </Reveal>
@@ -391,23 +418,48 @@ Install the core engine first:
         <Install />
       </Reveal>
 
+      <Reveal as="section" className="act">
+        <div className="act-num">07 · The data</div>
+        <h2 className="act-title">Real attacks, from public reports.</h2>
+        <div className="numbers">
+          <div><b>51</b><span>real malicious skill names</span></div>
+          <div><b>13</b><span>real attacker accounts</span></div>
+          <div><b>8</b><span>public reports, cited row by row</span></div>
+          <div><b>0</b><span>malicious files downloaded or run</span></div>
+        </div>
+        <div className="card sources-card">
+          <ul className="source-list">
+            {SOURCES.map(([name, url, what]) => (
+              <li key={name}>
+                <a href={url} target="_blank" rel="noreferrer">{name}</a>
+                <span className="muted small">{what}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="data-notes">
+          <p>
+            <b>Real:</b> the attacker accounts, servers, IPs and malware hashes, 51 skill names, and for 35 skills the
+            details a report ties to that exact skill: its publisher, the payload it fetches, or the server it calls. Every row in the data cites its report. All indicators are
+            stored defanged (<span className="mono">socifiapp[.]com</span>), and only text and metadata were ever read.
+          </p>
+          <p>
+            <b>Synthetic, and labelled so:</b> ClawHub took the 1,184 skills down and no full list is public, so made-up
+            names fill out the campaign on the real infrastructure. Some skill-to-server links are ours where a report
+            only names indicators for the campaign as a whole. Every <span className="mono">demo-*</span> skill is
+            synthetic. The full breakdown is in{' '}
+            <a href={`${LINKS.repo}/blob/main/data/sources.md`} target="_blank" rel="noreferrer">data/sources.md</a>.
+          </p>
+        </div>
+      </Reveal>
+
       <Reveal as="section" className="act act-last">
-        <div className="about-grid about-grid-2">
-          <div className="card">
-            <h3 className="card-title">Team</h3>
-            <ul className="team">
-              <li><span className="avatar">AM</span><div><b>Ayesha Mashiat</b><span className="muted small">Graph, backend, AI and integrations</span></div></li>
-              <li><span className="avatar">MJ</span><div><b>Mrittika Jahan</b><span className="muted small">Threat data and frontend</span></div></li>
-            </ul>
-          </div>
-          <div className="card">
-            <h3 className="card-title">About the data</h3>
-            <p className="muted small about-note">
-              Attacker accounts, servers, IPs and 23 skill names are real, from the public reports above. The full list
-              was taken down, so labelled synthetic skills fill in the campaign on the real infrastructure, and every{' '}
-              <span className="mono">demo-*</span> skill is synthetic. No malicious file was ever downloaded or run.
-            </p>
-          </div>
+        <div className="card team-card">
+          <h3 className="card-title">Team</h3>
+          <ul className="team team-row">
+            <li><span className="avatar">AM</span><div><b>Ayesha Mashiat</b><span className="muted small">Graph, backend, AI and integrations</span></div></li>
+            <li><span className="avatar">MJ</span><div><b>Mrittika Jahan</b><span className="muted small">Threat data and frontend</span></div></li>
+          </ul>
         </div>
         <p className="closing">Attackers work in campaigns. <span>Your agent’s defences should too.</span></p>
       </Reveal>

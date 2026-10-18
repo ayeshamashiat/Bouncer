@@ -109,6 +109,9 @@ def write(name, header, rows):
         w.writerows(rows)
 
 
+# Two skills whose report redacts the publisher: they must NOT end up linked to each other
+skills += [["redacted-skill-1", "", "2026-06-23", "known_bad", "Unit42-style", "", "true"],
+           ["redacted-skill-2", "", "2026-06-23", "known_bad", "Unit42-style", "", "true"]]
 write("skills.csv", ["skill_name", "publisher", "published_at", "status", "campaign", "source_report", "synthetic"], skills)
 write("infra.csv", ["skill_name", "kind", "value_defanged", "source_report"], infra)
 write("legit.csv", ["skill_name", "publisher", "published_at", "source_url"], legit)

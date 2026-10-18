@@ -185,6 +185,106 @@ infra += [["demo-git-tools", "domain", "github[.]com", "synthetic"],
           ["demo-weather", "domain", "open-meteo[.]com", "synthetic"]]
 
 
+# --- 7. More real data (added 18 Oct). Later reports name individual skills, their publishers and what
+#        each one downloads, so these rows need no assignment by us. It runs after everything above, with
+#        its own random generator, so the rows above stay exactly as they were.
+rng2 = random.Random(1018)
+
+# a) Publishers the later reports state for skills we had assigned at random (source, real handle)
+ATTRIBUTION = {
+    "reddit-trends": ("osm", "aslaep123"), "base-agent": ("osm", "aslaep123"), "bybit-agent": ("osm", "aslaep123"),
+    "polymarket-all-in-one": ("gh152", "noreplyboter"), "rankaj": ("ocsm", "rjnpage"),
+    "clawdhub1": ("snyk-clawdhub", "zaycv"),
+}
+moved_from_hightower = 0
+for row in skills:
+    if row[0] in ATTRIBUTION:
+        src, handle = ATTRIBUTION[row[0]]
+        moved_from_hightower += row[1] == "hightower6eu"
+        row[1], row[5] = handle, src
+        row[6] = "false"  # name, publisher and links now come from a report (dates may be approximate)
+        if row[0] == "clawdhub1":
+            row[2] = "2026-02-03"  # Snyk: appeared the day clawhub was removed
+# Keep hightower6eu's synthetic sample the same size (it really published 677; our sample is arbitrary).
+for _ in range(moved_from_hightower):
+    n = new_name()
+    skills.append([n, "hightower6eu", MASS_DAY, "known_bad", "ClawHavoc", "antiy", "true"])
+    infra.append([n, "domain", C2_DOMAIN, "antiy"])
+    infra.append([n, "ip", rng2.choice(IPS), "antiy"])
+
+# b) Indicators the reports tie to ONE named skill. Payload strings name a file, a host or a technique.
+B64 = "technique:base64-piped-to-bash"           # OpenSourceMalware: "Bash base64 payload"
+POLY_ZIP = "file:PolymarketAuthTool.zip"         # github.com/Aslaep123/PolymarketAuthTool, password "poly"
+CLI_ZIP = "file:openclawcli.zip"                 # github.com/Ddoy233/openclawcli
+CLAWDAUTH_ZIP = "file:ClawdAuthenticatorTool.zip"  # github.com/keepcold131/ClawdAuthenticatorTool
+CLUW = "sha256:818aea6143282b352fdfdc0f3ebf77a36e54eb3befb5cad1a355a99ab97c6aa7"  # Unit 42: "cluw" stealer
+SNYK_CLAWDHUB = [("ip", IPS[0]), ("domain", "glot[.]io"), ("domain", "download.setup-service[.]com"),
+                 ("payload", "marker:528n21ktxu08pmer"), ("payload", "payload-host:ddoy233"),
+                 ("payload", "zip-password:openclaw")]
+
+# (name, publisher ('' = the report redacts it), date or None, campaign, source, [(kind, value)])
+REPORTED = [
+    # OpenSourceMalware: per-publisher skill lists with the payload each one downloads
+    ("axiom-agent", "aslaep123", None, "ClawHavoc", "osm", [("payload", B64)]),
+    ("linkedin-job-application", "zaycv", None, "ClawHavoc", "osm", [("payload", B64)]),
+    ("polymarket-assistant", "zaycv", None, "ClawHavoc", "osm", [("payload", B64)]),
+    ("polymarket-hyperliquid-trading", "zaycv", None, "ClawHavoc", "osm", [("payload", B64)]),
+    ("polymarket-trading", "zaycv", None, "ClawHavoc", "osm",
+     [("payload", POLY_ZIP), ("payload", "payload-host:github-aslaep123")]),
+    ("polymarket-bot", "gpaitai", None, "ClawHavoc", "osm",
+     [("payload", POLY_ZIP), ("payload", "payload-host:github-aslaep123")]),
+    ("polymarket-prediction-agent", "lvy19811120-gif", None, "ClawHavoc", "osm", [("payload", B64)]),
+    ("proxy-scrap", "danman60", None, "ClawHavoc", "osm",
+     [("payload", CLAWDAUTH_ZIP), ("payload", "payload-host:github-keepcold131")]),
+    ("twittertrends", "jordanprater", None, "ClawHavoc", "osm", [("payload", CLI_ZIP), ("payload", "payload-host:ddoy233")]),
+    ("xtrends", "jordanprater", None, "ClawHavoc", "osm", [("payload", CLI_ZIP), ("payload", "payload-host:ddoy233")]),
+    ("youtube-video-downloader", "jordanprater", None, "ClawHavoc", "osm",
+     [("payload", CLI_ZIP), ("payload", "payload-host:ddoy233")]),
+    ("yahoofinance", "jordanprater", None, "ClawHavoc", "osm", []),
+    ("youtube-summarize", "jordanprater", None, "ClawHavoc", "osm", []),
+    ("youtube-thumbnail-grabber", "jordanprater", None, "ClawHavoc", "osm", []),
+    # Snyk: the clawhub typosquat and its same-day replacement, both by zaycv, on the ClawHavoc C2
+    ("clawhub", "zaycv", "2026-02-02", "ClawHavoc", "snyk-clawdhub", SNYK_CLAWDHUB),
+    # Snyk: a fake Google skill whose "prerequisite" is the fake openclaw-core (publisher not given)
+    ("google-qx4", "", None, "ClawHavoc", "snyk-google",
+     [("payload", "payload-host:github-denboss99"), ("payload", FAKE_DEP), ("domain", "rentry[.]co"),
+      ("domain", "setup-service[.]com")]),
+    # PolySwarm names it; the publisher isn't stated
+    ("better-polymarket", "", None, "ClawHavoc", "polyswarm", []),
+    # Unit 42 (23 Jun 2026): publishers redacted except krajekisbtc. Date = report date.
+    ("tradingview-ai-indicator-assistant", "", "2026-06-23", "Unit 42: cluw stealer", "unit42",
+     [("ip", "2.26.75[.]16"), ("payload", CLUW)]),
+    ("ai-tradingview-assistant-for-macos", "", "2026-06-23", "Unit 42: cluw stealer", "unit42",
+     [("domain", "rentry[.]co"), ("payload", CLUW)]),
+    ("omnicogg", "", "2026-06-23", "Unit 42 (Jun 2026)", "unit42", [("ip", IPS[0]), ("payload", B64)]),
+    ("money-radar", "", "2026-06-23", "Unit 42 (Jun 2026)", "unit42", [("domain", "laosji[.]net")]),
+    ("letssendit", "", "2026-06-23", "Unit 42 (Jun 2026)", "unit42", [("domain", "letssendit[.]fun")]),
+    ("polymarketbtc", "krajekisbtc", "2026-06-23", "Unit 42: Telegram exfiltration", "unit42",
+     [("payload", "exfil:telegram-bot-api")]),
+    ("polymarketbtcassistant", "krajekisbtc", "2026-06-23", "Unit 42: Telegram exfiltration", "unit42",
+     [("payload", "exfil:telegram-bot-api")]),
+    ("santi-text-game", "", "2026-06-23", "Unit 42 (Jun 2026)", "unit42", []),
+    ("pdfcheck", "", "2026-06-23", "Unit 42 (Jun 2026)", "unit42", []),
+    ("update", "", "2026-06-23", "Unit 42 (Jun 2026)", "unit42", []),
+    ("wistec-core", "", "2026-06-23", "Unit 42 (Jun 2026)", "unit42", []),
+]
+EARLY_WAVE = ["2026-01-27", "2026-01-28", "2026-01-29"]  # OSM: aslaep123, zaycv, gpaitai, danman60, lvy... first
+for name, pub, day, campaign, src, links in REPORTED:
+    assert name not in names, name
+    names.add(name)
+    if not day:
+        day = rng2.choice(EARLY_WAVE if pub in {"aslaep123", "zaycv", "gpaitai", "danman60", "lvy19811120-gif"}
+                          else CAMPAIGN_DAYS)
+    skills.append([name, pub, day, "known_bad", campaign, src, "false"])
+    infra += [[name, kind, value, src] for kind, value in links]
+# Snyk ties the same indicators to the existing clawdhub1 row, and OSM the same payload to polymarket-trading-bot
+infra += [["clawdhub1", kind, value, "snyk-clawdhub"] for kind, value in SNYK_CLAWDHUB]
+infra += [["polymarket-trading-bot", "payload", POLY_ZIP, "osm"],
+          ["polymarket-trading-bot", "payload", "payload-host:github-aslaep123", "osm"],
+          ["polymarket-trading-bot", "payload", "zip-password:poly", "osm"]]
+infra += [[n, "payload", B64, "osm"] for n in ("reddit-trends", "base-agent", "bybit-agent")]
+
+
 def write(name: str, header: list[str], rows: list[list[str]]) -> None:
     p = HERE / name
     p.parent.mkdir(parents=True, exist_ok=True)
@@ -208,5 +308,5 @@ write("infra.csv", INFRA_HEADER, unique)
 write("resolutions.csv", ["domain", "ip", "source_report"], [["pdfhelper-cdn[.]top", IPS[0], "synthetic"]])
 
 real = sum(1 for s in skills if s[6] == "false")
-print(f"{len(skills)} malicious skills ({real} fully real rows, {len(NAMED)} real names), "
+print(f"{len(skills)} malicious skills ({real} fully real rows, {len(NAMED) + len(REPORTED)} real names), "
       f"{len(legit)} legit, {len(unique)} infra rows")

@@ -98,6 +98,10 @@ same graph walk that finds an attacker's other skills finds a good publisher's o
 The graph algorithm **WCC (Weakly Connected Components)** groups everything that's connected into "islands". Every
 island containing known malware is a campaign, with all its accounts, servers and IPs listed.
 
+It also connects reports nobody connected by hand: `omnicogg`, from Unit 42's June 2026 report, lands in the
+**ClawHavoc** island from January because it calls the same C2 server, `91.92.242[.]30`. Unit 42's two TradingView
+skills form their own island through the "cluw" stealer they both fetch.
+
 ![Campaigns found by the WCC graph algorithm](docs/screenshots/campaigns.png)
 
 ---
@@ -108,17 +112,17 @@ We **hid** the "malicious" label on a random 30% of known-malicious skills, then
 We repeated this 5 times with different random picks. A blocklist can't find any of them: they're exactly the
 ones "not on the list".
 
-![Results: 95% caught vs 0% for a blocklist](docs/screenshots/results.png)
+![Results: 92% caught vs 0% for a blocklist](docs/screenshots/results.png)
 
 | | Bouncer | Blocklist |
 |---|---|---|
-| Hidden malicious skills linked to the campaign | **94.6%** (246 of 260) | 0% |
-| The rest: no link, but no track record either → held for a human (ASK) | **5.4%** (14 of 260) | – |
+| Hidden malicious skills linked to the campaign | **92.1%** (281 of 305) | 0% |
+| The rest: no link, but no track record either → held for a human (ASK) | **7.9%** (24 of 305) | – |
 | Hidden malicious skills allowed | **0%** | 100% |
 | Legitimate skills wrongly flagged | **1.5%** (10 of 680 checks) | 0% |
 | Time per check | **~5 ms** | – |
 
-"Caught" only counts skills the graph actually *links* to known malware. The 5.4% held for a human are counted
+"Caught" only counts skills the graph actually *links* to known malware. The 7.9% held for a human are counted
 separately, so the trust rule can't inflate the headline number.
 
 **What it misses, honestly:**
@@ -471,12 +475,17 @@ indicators are stored defanged (`socifiapp[.]com`, `hxxp://`) so they can't be c
 | [Antiy CERT: *ClawHavoc: Analysis of Large-Scale Poisoning Campaign Targeting the OpenClaw Skill Market*](https://www.antiy.net/p/clawhavoc-analysis-of-large-scale-poisoning-campaign-targeting-the-openclaw-skill-market-for-ai-agents/) | The 12 attacker accounts and their skill counts, 23 skill names, the attacker server, 5 IPs, malware markers, timeline |
 | [The Hacker News: *Researchers Find 341 Malicious ClawHub Skills…*](https://thehackernews.com/2026/02/researchers-find-341-malicious-clawhub.html) | Audit numbers (341 of 2,857 malicious) |
 | [Koi Security: ClawHavoc disclosure](https://www.koi.ai/blog/clawhavoc-341-malicious-clawedbot-skills-found-by-the-bot-they-were-targeting) | The original discovery and campaign name |
+| [OpenSourceMalware: *Malicious ClawHub skills target OpenClaw users*](https://opensourcemalware.com/blog/malicious-clawhub-skills-target-openclaw-users) | Which account published which skill (aslaep123, zaycv, jordanprater, gpaitai, lvy19811120-gif, danman60) and the payload each one fetches |
+| [Snyk: *Inside the 'clawdhub' Malicious Campaign*](https://snyk.io/articles/clawdhub-malicious-campaign-ai-agent-skills/) and [*a malicious Google skill*](https://snyk.io/blog/clawhub-malicious-google-skill-openclaw-malware/) | The clawhub/clawdhub1 typosquats by zaycv on the ClawHavoc C2; google-qx4 and the fake openclaw-core dependency |
+| [Unit 42: *OpenClaw's Skill Marketplace and the Emerging AI Supply Chain Threat*](https://unit42.paloaltonetworks.com/openclaw-ai-supply-chain-risk/) (June 2026) | 11 newer skills, the "cluw" stealer and its C2, Telegram exfiltration by krajekisbtc |
+| [PolySwarm](https://blog.polyswarm.io/the-clawhavoc-campaign), [ClawHub issue #152](https://github.com/openclaw/clawhub/issues/152), [openclaw-security-monitor](https://github.com/adibirzu/openclaw-security-monitor) | Single facts: better-polymarket; polymarket-all-in-one is by noreplyboter; rankaj is by rjnpage |
 | [VoltAgent/awesome-openclaw-skills](https://github.com/VoltAgent/awesome-openclaw-skills) | 131 legitimate skills (publishers flagged by Antiy removed). The public list has no dates and at most 2 skills per publisher, so on real data no publisher meets the trust threshold yet |
 
 **What's synthetic (labelled `synthetic=true` in the data):** the 1,184 real skills were removed from ClawHub, so
-no full list is public. The accounts, servers, IPs and 23 skill names are real. We added made-up skill names
-attached to that **real** infrastructure to bring the campaign to 150 skills, and the reports list servers for
-the campaign as a whole, so which skill used which server is our assignment. A small second campaign
+no full list is public. **Real:** 13 attacker accounts, the servers, IPs and hashes, 51 skill names, and for 35
+skills the publisher, payload or server a report ties to that exact skill. We added made-up skill names attached to
+the **real** infrastructure to fill out the campaign, and where a report lists servers only for the campaign as a
+whole, which skill used which server is our assignment. A small second campaign
 ("SyntheticBravo"), 10 "lone wolf" test skills, all `demo-*` skills, and the 5 dated vetted skills that give the
 demo publishers `gitfan-dev` and `weatherly` their track record are synthetic. Full details:
 [`data/sources.md`](data/sources.md).

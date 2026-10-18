@@ -1,11 +1,11 @@
 skill_name,publisher,published_at,status,campaign,source_report,synthetic
 polymarket-trading-bot,aslaep123,2026-01-27,known_bad,ClawHavoc,antiy,false
-reddit-trends,hightower6eu,2026-01-28,known_bad,ClawHavoc,antiy,true
-base-agent,hightower6eu,2026-01-28,known_bad,ClawHavoc,antiy,true
-bybit-agent,sakaen736jih,2026-01-29,known_bad,ClawHavoc,antiy,true
+reddit-trends,aslaep123,2026-01-28,known_bad,ClawHavoc,osm,false
+base-agent,aslaep123,2026-01-28,known_bad,ClawHavoc,osm,false
+bybit-agent,aslaep123,2026-01-29,known_bad,ClawHavoc,osm,false
 google-k53,sakaen736jih,2026-01-31,known_bad,ClawHavoc,antiy,true
-polymarket-all-in-one,hightower6eu,2026-01-28,known_bad,ClawHavoc,antiy,true
-rankaj,sakaen736jih,2026-01-31,known_bad,ClawHavoc,antiy,true
+polymarket-all-in-one,noreplyboter,2026-01-28,known_bad,ClawHavoc,gh152,false
+rankaj,rjnpage,2026-01-31,known_bad,ClawHavoc,ocsm,false
 solana-wallet-tracker,hightower6eu,2026-02-02,known_bad,ClawHavoc,antiy,true
 polymarket-trader,sakaen736jih,2026-01-31,known_bad,ClawHavoc,antiy,true
 binance-agent,hightower6eu,2026-01-27,known_bad,ClawHavoc,antiy,true
@@ -21,7 +21,7 @@ mac-optimizer,sakaen736jih,2026-01-30,known_bad,ClawHavoc,antiy,true
 clawhubb,sakaen736jih,2026-01-31,known_bad,ClawHavoc,antiy,true
 cllawhub,sakaen736jih,2026-01-29,known_bad,ClawHavoc,antiy,true
 clawwhub,hightower6eu,2026-01-28,known_bad,ClawHavoc,antiy,true
-clawdhub1,hightower6eu,2026-01-31,known_bad,ClawHavoc,antiy,true
+clawdhub1,zaycv,2026-02-03,known_bad,ClawHavoc,snyk-clawdhub,false
 phantom-sync-911,zaycv,2026-01-28,known_bad,ClawHavoc,antiy,true
 solana-agent-489,jordanprater,2026-01-31,known_bad,ClawHavoc,antiy,true
 gdrive-bot-159,noreplyboter,2026-02-02,known_bad,ClawHavoc,antiy,true
@@ -171,3 +171,35 @@ lw-reddit-trader-781,synthetic-lone-06,2026-02-03,known_bad,ClawHavoc,,true
 lw-binance-agent-525,synthetic-lone-07,2026-02-03,known_bad,ClawHavoc,,true
 lw-binance-cli-323,synthetic-lone-08,2026-02-03,known_bad,ClawHavoc,,true
 lw-binance-trader-124,synthetic-lone-09,2026-02-03,known_bad,ClawHavoc,,true
+wallet-cli-740,hightower6eu,2026-01-31,known_bad,ClawHavoc,antiy,true
+polymarket-bot-648,hightower6eu,2026-01-31,known_bad,ClawHavoc,antiy,true
+wallet-tracker-766,hightower6eu,2026-01-31,known_bad,ClawHavoc,antiy,true
+polymarket-bot-415,hightower6eu,2026-01-31,known_bad,ClawHavoc,antiy,true
+axiom-agent,aslaep123,2026-01-29,known_bad,ClawHavoc,osm,false
+linkedin-job-application,zaycv,2026-01-28,known_bad,ClawHavoc,osm,false
+polymarket-assistant,zaycv,2026-01-27,known_bad,ClawHavoc,osm,false
+polymarket-hyperliquid-trading,zaycv,2026-01-29,known_bad,ClawHavoc,osm,false
+polymarket-trading,zaycv,2026-01-27,known_bad,ClawHavoc,osm,false
+polymarket-bot,gpaitai,2026-01-29,known_bad,ClawHavoc,osm,false
+polymarket-prediction-agent,lvy19811120-gif,2026-01-29,known_bad,ClawHavoc,osm,false
+proxy-scrap,danman60,2026-01-29,known_bad,ClawHavoc,osm,false
+twittertrends,jordanprater,2026-01-31,known_bad,ClawHavoc,osm,false
+xtrends,jordanprater,2026-01-30,known_bad,ClawHavoc,osm,false
+youtube-video-downloader,jordanprater,2026-01-28,known_bad,ClawHavoc,osm,false
+yahoofinance,jordanprater,2026-01-31,known_bad,ClawHavoc,osm,false
+youtube-summarize,jordanprater,2026-02-02,known_bad,ClawHavoc,osm,false
+youtube-thumbnail-grabber,jordanprater,2026-01-29,known_bad,ClawHavoc,osm,false
+clawhub,zaycv,2026-02-02,known_bad,ClawHavoc,snyk-clawdhub,false
+google-qx4,,2026-01-29,known_bad,ClawHavoc,snyk-google,false
+better-polymarket,,2026-01-31,known_bad,ClawHavoc,polyswarm,false
+tradingview-ai-indicator-assistant,,2026-06-23,known_bad,Unit 42: cluw stealer,unit42,false
+ai-tradingview-assistant-for-macos,,2026-06-23,known_bad,Unit 42: cluw stealer,unit42,false
+omnicogg,,2026-06-23,known_bad,Unit 42 (Jun 2026),unit42,false
+money-radar,,2026-06-23,known_bad,Unit 42 (Jun 2026),unit42,false
+letssendit,,2026-06-23,known_bad,Unit 42 (Jun 2026),unit42,false
+polymarketbtc,krajekisbtc,2026-06-23,known_bad,Unit 42: Telegram exfiltration,unit42,false
+polymarketbtcassistant,krajekisbtc,2026-06-23,known_bad,Unit 42: Telegram exfiltration,unit42,false
+santi-text-game,,2026-06-23,known_bad,Unit 42 (Jun 2026),unit42,false
+pdfcheck,,2026-06-23,known_bad,Unit 42 (Jun 2026),unit42,false
+update,,2026-06-23,known_bad,Unit 42 (Jun 2026),unit42,false
+wistec-core,,2026-06-23,known_bad,Unit 42 (Jun 2026),unit42,false

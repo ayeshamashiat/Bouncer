@@ -423,6 +423,17 @@ h3 { font-size: 1rem; font-weight: 600; margin: 0; }
 .closing { margin: 64px 0 24px; text-align: center; font-size: clamp(1.4rem, 2.6vw, 2rem); font-weight: 600; letter-spacing: -0.03em; }
 .closing span { color: var(--accent); }
 
+/* the data */
+.sources-card { padding: 6px 24px; margin-bottom: 18px; }
+.source-list { list-style: none; margin: 0; padding: 0; }
+.source-list li { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr); gap: 20px; padding: 14px 0; border-top: 1px solid var(--border); align-items: baseline; }
+.source-list li:first-child { border-top: none; }
+.source-list a { font-weight: 500; }
+.data-notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.data-notes p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+.data-notes b { color: var(--text); font-weight: 600; }
+.team-row { flex-direction: row; gap: 40px; flex-wrap: wrap; }
+
 @media (prefers-reduced-motion: reduce) {
   .reveal, .term-line, .pd-node, .pd-verdict, .pd-edge::after, .pd-edge span, .cg-skill, .cg-hubs, .cg-edges line { transition: none !important; animation: none !important; opacity: 1; transform: none; }
 }
@@ -430,7 +441,8 @@ h3 { font-size: 1rem; font-weight: 600; margin: 0; }
   .landing > section { padding: 0 16px; }
   .hero { grid-template-columns: 1fr; min-height: 0; gap: 32px; padding-top: 32px !important; }
   .act { padding-top: 64px !important; }
-  .act-cols, .rules, .demos, .numbers, .numbers-3 { grid-template-columns: 1fr; }
+  .act-cols, .rules, .demos, .numbers, .numbers-3, .data-notes { grid-template-columns: 1fr; }
+  .source-list li { grid-template-columns: 1fr; gap: 4px; }
   .numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .timeline { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
   .cg { padding: 18px 12px; }
@@ -443,3 +455,7 @@ h3 { font-size: 1rem; font-weight: 600; margin: 0; }
   .install { padding: 18px 14px; }
   .steps li { padding-left: 38px; }
 }
+
+/* long indicators (SHA-256 hashes) wrap inside campaign cards instead of overflowing */
+.campaign-card { min-width: 0; }
+.campaign-card .chip { max-width: 100%; overflow-wrap: anywhere; white-space: normal; }

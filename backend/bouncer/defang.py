@@ -14,6 +14,10 @@ COMMON_INFRA_ALLOWLIST = {
     "amazonaws.com", "s3.amazonaws.com", "cloudflare.com", "jsdelivr.net",
     "cdn.jsdelivr.net", "unpkg.com", "clawhub.ai", "openclaw.ai", "anthropic.com",
     "openai.com", "huggingface.co",
+    # Public paste sites: campaigns abuse them, but so does everyone; a shared paste HOST proves
+    # nothing (the specific paste would). Hosting platforms like vercel.app are NOT listed: attackers
+    # own their subdomains there (openclawcli.vercel.app), so those stay evidence.
+    "rentry.co", "glot.io", "pastebin.com",
 }
 
 # Matches real (un-defanged) URLs and IPs: these must never sit in our data files.

@@ -227,9 +227,12 @@ def load_all(data_dir, g=None, reset: bool = False) -> dict:
         SET s.status = r.status, s.published_at = r.published_at, s.campaign = r.campaign,
             s.synthetic = r.synthetic
         WITH s, r
-        MERGE (p:Publisher {handle: r.publisher})
-        SET p.platform = 'clawhub'
-        MERGE (s)-[:PUBLISHED_BY]->(p)
+        // An empty publisher (a report that redacts it) gets no Publisher node: a shared "" node
+        // would link every redacted skill to every other one.
+        FOREACH (_ IN CASE WHEN r.publisher = '' THEN [] ELSE [1] END |
+            MERGE (p:Publisher {handle: r.publisher})
+            SET p.platform = 'clawhub'
+            MERGE (s)-[:PUBLISHED_BY]->(p))
         WITH s, r
         MATCH (rep:Report {url: r.report})
         MERGE (s)-[:SOURCED_FROM]->(rep)

@@ -27,3 +27,10 @@ def test_supernodes_are_common_infra(g):
     names = {r[0] for r in rows}
     assert "github[.]com" in names
     assert "docs-host[.]io" in names  # degree check, not allowlist
+
+
+def test_redacted_publisher_creates_no_link(g):
+    # An empty publisher must not become one shared Publisher node joining every redacted skill
+    assert g.query("MATCH (p:Publisher {handle: ''}) RETURN count(p)").result_set[0][0] == 0
+    rows = g.query("MATCH (s:Skill {name: 'redacted-skill-1'})-[:PUBLISHED_BY]->(p) RETURN count(p)").result_set
+    assert rows[0][0] == 0
