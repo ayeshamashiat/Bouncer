@@ -6,6 +6,9 @@ import Verdict from './pages/Verdict.jsx'
 import Campaigns from './pages/Campaigns.jsx'
 import Investigate from './pages/Investigate.jsx'
 import Results from './pages/Results.jsx'
+import About from './pages/About.jsx'
+import { GitHubIcon } from './components/common.jsx'
+import { LINKS } from './links.js'
 
 function useApiStatus() {
   const [status, setStatus] = useState({ ok: true, nodes: null })
@@ -42,6 +45,7 @@ export default function App() {
           <NavLink to="/campaigns">Campaigns</NavLink>
           <NavLink to="/investigate">Investigate</NavLink>
           <NavLink to="/results">Results</NavLink>
+          <NavLink to="/about">About</NavLink>
         </nav>
         <div className="status">
           {USE_MOCKS ? (
@@ -50,6 +54,11 @@ export default function App() {
             <span className={`pill ${api.ok ? 'pill-ok' : 'pill-bad'}`}>
               {api.ok ? `Live · ${api.nodes ?? '?'} nodes` : 'API offline'}
             </span>
+          )}
+          {LINKS.repo && (
+            <a href={LINKS.repo} className="icon-link" target="_blank" rel="noreferrer" aria-label="Source code on GitHub" title="Source code on GitHub">
+              <GitHubIcon size={18} />
+            </a>
           )}
         </div>
       </header>
@@ -67,10 +76,26 @@ export default function App() {
           <Route path="/campaigns" element={<Campaigns />} />
           <Route path="/investigate" element={<Investigate />} />
           <Route path="/results" element={<Results />} />
+          <Route path="/about" element={<About />} />
           <Route path="*" element={<p className="muted">Page not found.</p>} />
         </Routes>
       </main>
-      <footer className="footer">Attackers work in campaigns. Your agent's defences should too.</footer>
+      <footer className="footer">
+        <div className="footer-inner">
+          <div className="footer-brand">
+            <b>Bouncer</b>
+            <span>Attackers work in campaigns. Your agent's defences should too.</span>
+          </div>
+          <nav className="footer-links">
+            <NavLink to="/about">About</NavLink>
+            {LINKS.repo && <a href={LINKS.repo} target="_blank" rel="noreferrer">GitHub</a>}
+            {LINKS.video && <a href={LINKS.video} target="_blank" rel="noreferrer">Demo video</a>}
+            {LINKS.post && <a href={LINKS.post} target="_blank" rel="noreferrer">Write-up</a>}
+            <a href={LINKS.hackathon} target="_blank" rel="noreferrer">Graph Hacks 2026</a>
+          </nav>
+        </div>
+        <div className="footer-fine">Built on FalkorDB by Ayesha Mashiat and Mrittika Jahan. Demo data is partly synthetic; see About.</div>
+      </footer>
     </div>
   )
 }
