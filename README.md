@@ -106,6 +106,57 @@ skills form their own island through the "cluw" stealer they both fetch.
 
 ---
 
+## The graph, mapped
+
+This is the whole threat graph, drawn live from FalkorDB on the website's **Graph map** page (every node with at least one evidence link). Red dots are
+malicious skills, green are community-vetted ones, blue squares are accounts and grey shapes are servers, IPs and
+payloads. You can see the campaigns form on their own: ClawHavoc is the big red cluster, and the small campaigns
+sit apart because they share nothing with it.
+
+![The whole threat graph, campaigns visible as clusters](docs/screenshots/graph-map.png)
+
+**What's in it** (after `python -m bouncer.loaders ../data/ --reset`):
+
+| Nodes | Count | | Relationships | Count |
+|---|---|---|---|---|
+| `Skill` (204 malicious, 136 vetted, 3 demo) | 343 | | `PUBLISHED_BY` skill → account | 332 |
+| `Publisher` (attacker and legitimate accounts) | 151 | | `CONTACTS` skill → domain | 224 |
+| `PayloadString` (hashes, files, techniques) | 23 | | `DOWNLOADS_FROM` skill → IP | 108 |
+| `Domain` · `IP` | 7 · 7 | | `CONTAINS` skill → payload | 89 |
+| `CommonInfra` (github.com, pypi.org, paste sites…) | 6 | | `RESOLVES_TO` domain → IP | 1 |
+| `Campaign` · `Report` · `Category` | 5 · 12 · 9 | | `PART_OF` · `SOURCED_FROM` · `IN_CATEGORY` (labels, never evidence) | 204 · 260 · 211 |
+
+**Three subgraphs** from it. Subgraphs 2 and 3 are entirely from public reports; subgraph 1 is the demo (`demo-crypto-tracker` is synthetic, and so is solana-wallet-tracker's publisher assignment):
+
+```mermaid
+graph LR
+    subgraph A["1 · the demo: one account, many skills (BLOCK in 2 hops)"]
+        n1([demo-crypto-tracker<br/>brand new]) -- PUBLISHED_BY --> h[hightower6eu]
+        b1([solana-wallet-tracker]) -- PUBLISHED_BY --> h
+        b2([… 78 more malicious skills]) -- PUBLISHED_BY --> h
+    end
+    subgraph B["2 · three accounts, one payload"]
+        p1([polymarket-trading-bot]) -- PUBLISHED_BY --> a1[aslaep123]
+        p2([polymarket-trading]) -- PUBLISHED_BY --> a2[zaycv]
+        p3([polymarket-bot]) -- PUBLISHED_BY --> a3[gpaitai]
+        p1 & p2 & p3 -- CONTAINS --> z{{PolymarketAuthTool.zip}}
+    end
+    subgraph C["3 · two reports, five months apart, one server"]
+        o([omnicogg<br/>Unit 42, June 2026]) -- DOWNLOADS_FROM --> ip{{91.92.242.30}}
+        c1([clawhub<br/>Snyk, Feb 2026]) -- DOWNLOADS_FROM --> ip
+        c2([… 21 more ClawHavoc skills]) -- DOWNLOADS_FROM --> ip
+    end
+```
+
+### Watch the graph do the work
+Type a skill on the Graph map page and Bouncer runs a real check. The path it found lights up across the whole map,
+and next to it are the exact Cypher queries it ran, what each one returned and how long it took in FalkorDB. Every
+verdict card shows the same "How the graph decided" panel.
+
+![Tracing demo-crypto-tracker: the path lights up on the map, with the queries that found it](docs/screenshots/graph-trace.png)
+
+---
+
 ## How well it works
 
 We **hid** the "malicious" label on a random 30% of known-malicious skills, then asked Bouncer to find them again.

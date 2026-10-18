@@ -76,6 +76,11 @@ export function investigate(name, text) {
   return request('/api/investigate', { method: 'POST', body: JSON.stringify({ name, text }) })
 }
 
+// The whole evidence graph. Mock mode has no full graph, so it shows the BLOCK example's evidence.
+export function getGraphMap() {
+  return USE_MOCKS ? delay(mockBlock.evidence) : request('/api/graph/map')
+}
+
 export function getEval() {
   return USE_MOCKS ? delay(mockEval) : request('/api/eval')
 }

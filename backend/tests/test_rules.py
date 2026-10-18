@@ -62,3 +62,11 @@ def test_write_back_creates_decision(g):
     check_install("skill", "demo-weather", source="ui", g=g)
     rows = g.query("MATCH (d:Decision {name: 'demo-weather'})-[:ABOUT]->(:Skill) RETURN count(d)").result_set
     assert rows[0][0] >= 1
+
+
+def test_trace_shows_the_graph_work(g):
+    r = check_install("skill", "demo-crypto-tracker", write_back=False, g=g)
+    steps = [s["query"] for s in r["trace"]]
+    assert steps[0].startswith("Q1") and steps[1].startswith("Q2 · path of 2 hops")
+    assert r["trace"][1]["result"].startswith("found") and "MATCH p =" in r["trace"][1]["cypher"]
+    assert r["trace"][-1]["result"] == "BLOCK"

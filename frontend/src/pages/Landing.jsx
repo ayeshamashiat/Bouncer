@@ -297,10 +297,10 @@ export default function Landing() {
       <section className="hero">
         <div className="hero-copy">
           <div className="kicker"><span className="dot" /> AI agent security · built on FalkorDB</div>
-          <h1 className="hero-title">Your AI agent just installed malware.<br /><span>It looked brand new.</span></h1>
+          <h1 className="hero-title">Your agent installed one skill.<span>Now your passwords, wallets and bank logins are gone.</span></h1>
           <p className="hero-lede">
-            Attackers flooded the ClawHub skill marketplace with 1,184 malicious skills. Each one looked new on its
-            own. Together they were one campaign. <b>Bouncer</b> follows the connections, and stops the install before it runs.
+            It happened 1,184 times on ClawHub in January 2026. Each malicious skill looked new on its own; together
+            they were one campaign. <b>Bouncer</b> follows the connections in a graph, and stops the install before it runs.
           </p>
           <div className="hero-actions">
             <Link to="/check/demo-crypto-tracker" className="btn btn-primary">See it block one</Link>
@@ -409,7 +409,7 @@ Install the core engine first:
           <div><b>{ev ? pct(ev.blocklist_recall) : '0%'}</b><span>found by a blocklist on the same test</span></div>
           <div><b>{ev ? `${pct(ev.allowed_rate ?? 0)}` : '0%'}</b><span>let through: the rest are held for a human</span></div>
         </div>
-        <p className="muted small"><Link to="/results">How we measured this →</Link> · <Link to="/campaigns">Campaigns found by the WCC algorithm →</Link> · <Link to="/feed">Live install feed →</Link></p>
+        <p className="muted small"><Link to="/graph?skill=demo-crypto-tracker">Watch the graph trace it →</Link> · <Link to="/results">How we measured this →</Link> · <Link to="/campaigns">Campaigns found by the WCC algorithm →</Link> · <Link to="/feed">Live install feed →</Link></p>
       </Reveal>
 
       <Reveal as="section" className="act" id="install">

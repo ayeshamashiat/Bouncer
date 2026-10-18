@@ -7,6 +7,7 @@ import Campaigns from './pages/Campaigns.jsx'
 import Investigate from './pages/Investigate.jsx'
 import Results from './pages/Results.jsx'
 import Landing from './pages/Landing.jsx'
+import GraphMap from './pages/GraphMap.jsx'
 import { GitHubIcon } from './components/common.jsx'
 import { LINKS } from './links.js'
 
@@ -57,6 +58,7 @@ export default function App() {
         <nav className="nav">
           <NavLink to="/" end>Overview</NavLink>
           <NavLink to="/feed">Install feed</NavLink>
+          <NavLink to="/graph">Graph map</NavLink>
           <NavLink to="/check">Check</NavLink>
           <NavLink to="/campaigns">Campaigns</NavLink>
           <NavLink to="/investigate">Investigate</NavLink>
@@ -87,6 +89,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/feed" element={<Feed />} />
+          <Route path="/graph" element={<GraphMap />} />
           <Route path="/check" element={<Verdict />} />
           <Route path="/check/:name" element={<Verdict />} />
           <Route path="/campaigns" element={<Campaigns />} />

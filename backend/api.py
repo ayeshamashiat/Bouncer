@@ -93,10 +93,18 @@ class Alternative(BaseModel):
     reason: str
 
 
+class TraceStep(BaseModel):
+    query: str
+    cypher: str
+    result: str
+    ms: float
+
+
 class CheckResponse(BaseModel):
     verdict: Literal["ALLOW", "ASK", "BLOCK"]
     rule: str = ""
     reason: str
+    trace: list[TraceStep] = []
     route: list[str]
     evidence: Graph
     campaign: str | None
@@ -238,6 +246,13 @@ def neighbourhood(name: str = Query(..., min_length=1), hops: int = Query(2, ge=
     if start is None:
         raise ApiError(404, "not_found", f"No item named {name}")
     nodes, edges = queries.neighbourhood(start, hops=hops, limit=150, g=g)
+    return graph_json(nodes, edges)
+
+
+@app.get("/api/graph/map", response_model=Graph)
+def graph_map():
+    """The whole evidence graph (no decisions or bookkeeping), for the graph map page."""
+    nodes, edges = queries.whole_map()
     return graph_json(nodes, edges)
 
 

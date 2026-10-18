@@ -15,7 +15,7 @@ def test_check_shape(g):
     r = client.post("/api/check", json={"kind": "skill", "name": "demo-crypto-tracker", "source": "ui"})
     body = r.json()
     assert r.status_code == 200
-    assert set(body) == {"verdict", "rule", "reason", "route", "evidence", "campaign", "checked_at", "ms", "alternatives"}
+    assert set(body) == {"verdict", "rule", "reason", "trace", "route", "evidence", "campaign", "checked_at", "ms", "alternatives"}
     assert all(set(n) == NODE_KEYS for n in body["evidence"]["nodes"])
     assert body["checked_at"].endswith("Z")
 
@@ -35,3 +35,11 @@ def test_errors_are_contract_shaped(g):
 def test_campaigns_shape(g):
     c = client.get("/api/campaigns").json()[0]
     assert set(c) == {"campaign_id", "name", "size", "known_bad", "members", "shared_infra"}
+
+
+def test_graph_map(g):
+    body = client.get("/api/graph/map").json()
+    types = {n["type"] for n in body["nodes"]}
+    assert {"Skill", "Publisher"} <= types and "Decision" not in types
+    ids = {n["id"] for n in body["nodes"]}
+    assert all(e["source"] in ids and e["target"] in ids for e in body["edges"])

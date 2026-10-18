@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { VerdictBadge, formatDateTime, idLabel } from './common.jsx'
+import TracePanel from './TracePanel.jsx'
 
 export default function VerdictCard({ result, name }) {
   const v = result.verdict.toLowerCase()
@@ -46,6 +47,10 @@ export default function VerdictCard({ result, name }) {
             </li>
           ))}
         </ol>
+      )}
+      <TracePanel trace={result.trace} />
+      {result.route.length > 1 && (
+        <Link to={`/graph?skill=${encodeURIComponent(name)}`} className="small map-link">See this path on the whole graph →</Link>
       )}
       {result.alternatives?.length > 0 && (
         <div className="alternatives">

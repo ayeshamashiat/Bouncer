@@ -46,24 +46,36 @@ def check_install(kind: str, name: str, source: str = "ui", write_back: bool = T
                   suggest: bool = True) -> dict:
     t0 = time.perf_counter()
     g = g or get_graph()
+    trace = []  # every graph query this check ran, with its result and time (the UI shows it)
+    tq = time.perf_counter()
     skill, campaign = queries.lookup(name, g)
     seen = skill is not None
     status = skill.properties.get("status") if seen else None
+    trace.append({"query": "Q1 · do we know this skill?", "cypher": queries.Q1_LOOKUP.strip(),
+                  "result": f"found, status {status}" if seen else "not in the graph",
+                  "ms": round((time.perf_counter() - tq) * 1000, 2)})
 
     path, path_campaign, hops = None, None, None
     if seen and status != "known_bad":
-        path, path_campaign = queries.guilt_by_connection(name, rules.ASK_MAX_HOPS, g)
+        path, path_campaign = queries.guilt_by_connection(name, rules.ASK_MAX_HOPS, g, trace=trace)
         hops = len(path.edges()) if path is not None else None
 
     # Good evidence is only looked up when nothing bad was found (trust can't cancel a block).
     record, trusted = None, False
     if seen and hops is None and status not in ("known_bad", "trusted"):
+        tq = time.perf_counter()
         record = queries.track_record(name, g)
         if record:
             dated = [v for v in record["vetted"] if v.properties.get("published_at")]
             trusted = rules.publisher_is_trusted(len(dated), record["known_bad"], _age_days(record["since"]))
+        trace.append({"query": "Q7 · does the publisher have a track record?", "cypher": queries.Q7_TRACK_RECORD.strip(),
+                      "result": (f"{record['publisher'].properties['handle']}: {len(record['vetted'])} vetted, "
+                                 f"{record['known_bad']} malicious" + (" → trusted" if trusted else " → not enough"))
+                      if record else "no publisher with other skills",
+                      "ms": round((time.perf_counter() - tq) * 1000, 2)})
 
     verdict, rule = rules.decide(seen, status, hops, trusted)
+    trace.append({"query": f"Rules · {rule.replace('_', ' ')}", "cypher": "", "result": verdict, "ms": 0})
 
     # ---- reason + route + evidence
     if rule == rules.R_KNOWN_BAD:
@@ -121,7 +133,7 @@ def check_install(kind: str, name: str, source: str = "ui", write_back: bool = T
 
     checked_at = now_iso()
     ms = round((time.perf_counter() - t0) * 1000)
-    result = {"verdict": verdict, "rule": rule, "reason": reason, "route": route, "evidence": evidence,
+    result = {"verdict": verdict, "rule": rule, "reason": reason, "trace": trace, "route": route, "evidence": evidence,
               "campaign": campaign or None, "checked_at": checked_at, "ms": ms,
               "alternatives": suggest_alternatives(name, g) if suggest and verdict != rules.ALLOW else []}
     if write_back:

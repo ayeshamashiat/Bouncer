@@ -310,7 +310,7 @@ h3 { font-size: 1rem; font-weight: 600; margin: 0; }
   padding: 5px 12px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); }
 .kicker .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bad); box-shadow: 0 0 0 4px var(--bad-soft); }
 .hero-title { font-size: clamp(2.3rem, 4.6vw, 3.6rem); line-height: 1.04; letter-spacing: -0.045em; margin: 22px 0 18px; font-weight: 650; }
-.hero-title span { color: var(--faint); }
+.hero-title span { display: block; margin-top: 10px; color: var(--bad); font-size: 0.56em; line-height: 1.15; letter-spacing: -0.03em; }
 .hero-lede { font-size: 1.1rem; color: var(--muted); max-width: 540px; margin: 0 0 28px; }
 .hero-lede b { color: var(--text); font-weight: 600; }
 .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -459,3 +459,40 @@ h3 { font-size: 1rem; font-weight: 600; margin: 0; }
 /* long indicators (SHA-256 hashes) wrap inside campaign cards instead of overflowing */
 .campaign-card { min-width: 0; }
 .campaign-card .chip { max-width: 100%; overflow-wrap: anywhere; white-space: normal; }
+
+/* "how the graph decided" trace */
+.trace { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); }
+.trace-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.trace-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.trace-steps summary { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) auto; gap: 10px; align-items: baseline;
+  padding: 7px 10px; border-radius: 8px; background: var(--bg); cursor: pointer; list-style: none; font-size: 0.82rem; }
+.trace-steps summary::-webkit-details-marker { display: none; }
+.trace-steps summary:hover { background: var(--surface-2); }
+.trace-q { font-weight: 500; }
+.trace-r { color: var(--muted); font-size: 0.76rem; overflow-wrap: anywhere; }
+.trace-ms { color: var(--accent); font-size: 0.74rem; white-space: nowrap; }
+.trace-rule summary { background: none; cursor: default; }
+.trace-rule .trace-r { color: var(--text); font-weight: 600; }
+.trace-cypher { margin: 4px 0 6px; padding: 10px 12px; border-radius: 8px; background: #18181b; color: #e4e4e7;
+  font: 0.74rem/1.55 var(--mono); overflow-x: auto; white-space: pre; }
+.map-link { display: inline-block; margin-top: 10px; }
+
+/* graph map */
+.map-search { display: flex; gap: 10px; flex-wrap: wrap; }
+.map-search .input { min-width: 240px; }
+.map-wrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.map-wrap:has(.map-result) { grid-template-columns: minmax(0, 1fr) 380px; }
+.map-card { padding: 0; overflow: hidden; }
+.map-canvas { height: 640px; background: radial-gradient(#e4e4e7 1px, transparent 1px) 0 0 / 22px 22px; }
+.map-stats { display: flex; flex-wrap: wrap; gap: 8px 18px; padding: 12px 18px; border-top: 1px solid var(--border); font-size: 0.8rem; }
+.map-stats span { display: inline-flex; align-items: center; gap: 6px; }
+.map-stats i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.map-stats i.sq { border-radius: 2px; }
+.map-result { display: flex; flex-direction: column; gap: 6px; align-self: start; }
+.map-result h2 { font-size: 1rem; }
+@media (max-width: 860px) {
+  .map-wrap:has(.map-result) { grid-template-columns: 1fr; }
+  .map-canvas { height: 440px; }
+  .trace-steps summary { grid-template-columns: 1fr auto; }
+  .trace-r { grid-column: 1 / -1; grid-row: 2; }
+}

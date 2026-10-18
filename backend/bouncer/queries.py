@@ -4,6 +4,8 @@ Every query uses $parameters, never string formatting of user input.
 Detection paths only follow STRONG_RELS (see schema.py) and never pass
 through a CommonInfra node (supernodes prove nothing).
 """
+import time
+
 from .db import get_graph
 
 STRONG = "PUBLISHED_BY|CONTACTS|RESOLVES_TO|DOWNLOADS_FROM|CONTAINS"
@@ -46,14 +48,20 @@ RETURN p, bad.campaign
 Q2_BY_LENGTH = {k: _Q2_TEMPLATE % (STRONG, k, k) for k in (2, 3, 4)}
 
 
-def guilt_by_connection(name: str, max_hops: int = 4, g=None):
+def guilt_by_connection(name: str, max_hops: int = 4, g=None, trace: list | None = None):
     """Shortest evidence path from the skill to a known_bad skill.
-    Returns (path, campaign_name) or (None, None)."""
+    Returns (path, campaign_name) or (None, None). If `trace` is a list, every query tried is
+    appended to it as {"query", "cypher", "result", "ms"} (shown in the UI as the graph's work)."""
     g = g or get_graph()
     for k in (2, 3, 4):
         if k > max_hops:
             break
+        t0 = time.perf_counter()
         rows = g.ro_query(Q2_BY_LENGTH[k], {"name": name}).result_set
+        if trace is not None:
+            trace.append({"query": f"Q2 · path of {k} hops to known malware", "cypher": Q2_BY_LENGTH[k].strip(),
+                          "result": f"found: {len(rows[0][0].nodes())} nodes, {k} hops" if rows else "no path",
+                          "ms": round((time.perf_counter() - t0) * 1000, 2)})
         if rows:
             return rows[0][0], rows[0][1]
     return None, None
@@ -261,6 +269,24 @@ def publisher_skills(pub, names: list[str], g=None):
     g = g or get_graph()
     rows = g.ro_query(Q7_PUBLISHER_SKILLS, {"id": pub.id, "names": names}).result_set
     return [pub] + [o for o, _ in rows], [r for _, r in rows]
+
+
+# ---------------------------------------------------------------- Q8 the whole map
+# Every evidence node and edge, for the "graph map" page. Decisions, findings, reports and
+# categories are left out: they are bookkeeping, not evidence.
+Q8_MAP = """
+MATCH (a)-[r:%s]->(b)
+RETURN a, r, b
+""" % STRONG
+
+
+def whole_map(g=None):
+    g = g or get_graph()
+    nodes, edges = {}, []
+    for a, r, b in g.ro_query(Q8_MAP).result_set:
+        nodes[a.id], nodes[b.id] = a, b
+        edges.append(r)
+    return list(nodes.values()), edges
 
 
 # ---------------------------------------------------------------- misc
