@@ -5,55 +5,10 @@ import { getDecisions } from '../api.js'
 import { Empty, ErrorState, Loading, VerdictBadge, formatTime } from '../components/common.jsx'
 
 const POLL_MS = 3000
-const WELCOME_KEY = 'bouncer.welcome.dismissed'
-
-function readDismissed() {
-  try { return localStorage.getItem(WELCOME_KEY) === '1' } catch { return false }
-}
-
-// First-visit intro: what this is, and three one-click demos.
-function Welcome({ onClose }) {
-  return (
-    <section className="card welcome" aria-label="Welcome">
-      <button className="welcome-close" onClick={onClose} aria-label="Dismiss">×</button>
-      <div className="welcome-text">
-        <div className="eyebrow">Welcome</div>
-        <h2 className="welcome-title">Bouncer checks every skill your AI agent tries to install.</h2>
-        <p className="muted">
-          It follows the connections in a FalkorDB threat graph (accounts, servers, IPs) to known malware, and answers
-          ALLOW, ASK or BLOCK with the path that proves it. <Link to="/about">How it works →</Link>
-        </p>
-      </div>
-      <div className="welcome-demos">
-        <Link to="/check/demo-crypto-tracker" className="demo-tile">
-          <span className="badge badge-sm badge-block">BLOCK</span>
-          <b>A brand-new skill from an attacker account</b>
-          <span className="muted small">demo-crypto-tracker</span>
-        </Link>
-        <Link to="/investigate" className="demo-tile">
-          <span className="badge badge-sm badge-ask">ASK</span>
-          <b>An unknown skill that tries to trick the AI</b>
-          <span className="muted small">Investigate → Load demo example</span>
-        </Link>
-        <Link to="/check/demo-git-tools" className="demo-tile">
-          <span className="badge badge-sm badge-allow">ALLOW</span>
-          <b>A legitimate skill with a track record</b>
-          <span className="muted small">demo-git-tools</span>
-        </Link>
-      </div>
-    </section>
-  )
-}
-
 export default function Feed() {
   const [rows, setRows] = useState(null)
   const [error, setError] = useState(null)
   const navigate = useNavigate()
-  const [welcome, setWelcome] = useState(() => !readDismissed())
-  const closeWelcome = () => {
-    setWelcome(false)
-    try { localStorage.setItem(WELCOME_KEY, '1') } catch { /* private mode: just hide for now */ }
-  }
 
   useEffect(() => {
     let alive = true
@@ -93,8 +48,6 @@ export default function Feed() {
           </div>
         )}
       </div>
-
-      {welcome && <Welcome onClose={closeWelcome} />}
 
       {error && !rows && <ErrorState error={error} />}
       {error && rows && <p className="muted small">Last refresh failed: {error.message}. Showing the previous data.</p>}

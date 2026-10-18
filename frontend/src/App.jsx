@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { NavLink, Route, Routes } from 'react-router-dom'
+import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { API_URL, USE_MOCKS, getHealth } from './api.js'
 import Feed from './pages/Feed.jsx'
 import Verdict from './pages/Verdict.jsx'
 import Campaigns from './pages/Campaigns.jsx'
 import Investigate from './pages/Investigate.jsx'
 import Results from './pages/Results.jsx'
-import About from './pages/About.jsx'
+import Landing from './pages/Landing.jsx'
 import { GitHubIcon } from './components/common.jsx'
 import { LINKS } from './links.js'
 
@@ -28,8 +28,23 @@ function useApiStatus() {
   return status
 }
 
+// New page: start at the top. A #hash (like /#install): scroll to it once the page has rendered.
+function useScrollOnNavigate(pathname, hash) {
+  useEffect(() => {
+    if (!hash) {
+      window.scrollTo(0, 0)
+      return undefined
+    }
+    const t = setTimeout(() => document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth' }), 60)
+    return () => clearTimeout(t)
+  }, [pathname, hash])
+}
+
 export default function App() {
   const api = useApiStatus()
+  const { pathname, hash } = useLocation()
+  const isLanding = pathname === '/'
+  useScrollOnNavigate(pathname, hash)
   return (
     <div className="app">
       <header className="topbar">
@@ -40,12 +55,12 @@ export default function App() {
           Bouncer
         </NavLink>
         <nav className="nav">
-          <NavLink to="/" end>Install feed</NavLink>
+          <NavLink to="/" end>Overview</NavLink>
+          <NavLink to="/feed">Install feed</NavLink>
           <NavLink to="/check">Check</NavLink>
           <NavLink to="/campaigns">Campaigns</NavLink>
           <NavLink to="/investigate">Investigate</NavLink>
           <NavLink to="/results">Results</NavLink>
-          <NavLink to="/about">About</NavLink>
         </nav>
         <div className="status">
           {USE_MOCKS ? (
@@ -68,15 +83,16 @@ export default function App() {
           <code>uvicorn api:app --reload</code> in <code>backend/</code>, or set <code>VITE_USE_MOCKS=true</code>.
         </div>
       )}
-      <main className="main">
+      <main className={`main${isLanding ? ' main-landing' : ''}`}>
         <Routes>
-          <Route path="/" element={<Feed />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/feed" element={<Feed />} />
           <Route path="/check" element={<Verdict />} />
           <Route path="/check/:name" element={<Verdict />} />
           <Route path="/campaigns" element={<Campaigns />} />
           <Route path="/investigate" element={<Investigate />} />
           <Route path="/results" element={<Results />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/about" element={<Navigate to="/" replace />} />
           <Route path="*" element={<p className="muted">Page not found.</p>} />
         </Routes>
       </main>
@@ -87,14 +103,15 @@ export default function App() {
             <span>Attackers work in campaigns. Your agent's defences should too.</span>
           </div>
           <nav className="footer-links">
-            <NavLink to="/about">About</NavLink>
+            <NavLink to="/" end>Overview</NavLink>
+            <a href="/#install">Install</a>
             {LINKS.repo && <a href={LINKS.repo} target="_blank" rel="noreferrer">GitHub</a>}
             {LINKS.video && <a href={LINKS.video} target="_blank" rel="noreferrer">Demo video</a>}
             {LINKS.post && <a href={LINKS.post} target="_blank" rel="noreferrer">Write-up</a>}
             <a href={LINKS.hackathon} target="_blank" rel="noreferrer">Graph Hacks 2026</a>
           </nav>
         </div>
-        <div className="footer-fine">Built on FalkorDB by Ayesha Mashiat and Mrittika Jahan. Demo data is partly synthetic; see About.</div>
+        <div className="footer-fine">Built on FalkorDB by Ayesha Mashiat and Mrittika Jahan. Demo data is partly synthetic.</div>
       </footer>
     </div>
   )
