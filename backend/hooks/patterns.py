@@ -9,18 +9,21 @@ import os
 import re
 
 # (kind, regex). Group "name" is the item being installed.
+# _P = an optional path before the program name, so "/home/me/bin/clawhub install x" and
+# "./node_modules/.bin/clawhub install x" are caught too (not only a bare "clawhub").
+_P = r"""(?:["']?[^\s;&|"']*/)?"""
 _SKILL = [
-    re.compile(r"(?:^|[\s;&|(])(?:npx\s+(?:-y\s+)?)?clawhub(?:@\S+)?\s+(?:install|add)\s+(?:--?\S+\s+)*(?P<name>[^\s;&|]+)"),
-    re.compile(r"(?:^|[\s;&|(])openclaw\s+skills?\s+(?:install|add)\s+(?:--?\S+\s+)*(?P<name>[^\s;&|]+)"),
+    re.compile(r"(?:^|[\s;&|(])" + _P + r"(?:npx\s+(?:-y\s+)?)?clawhub(?:@\S+)?\s+(?:install|add)\s+(?:--?\S+\s+)*(?P<name>[^\s;&|]+)"),
+    re.compile(r"(?:^|[\s;&|(])" + _P + r"openclaw\s+skills?\s+(?:install|add)\s+(?:--?\S+\s+)*(?P<name>[^\s;&|]+)"),
 ]
 _MCP = [
     # claude mcp add [options] <name> <command...>
-    re.compile(r"(?:^|[\s;&|(])claude\s+mcp\s+add(?:-json)?\s+(?:(?:-s|--scope|-t|--transport|-e|--env|-H|--header)\s+\S+\s+|--?\S+\s+)*(?P<name>[^\s;&|-][^\s;&|]*)"),
+    re.compile(r"(?:^|[\s;&|(])" + _P + r"claude\s+mcp\s+add(?:-json)?\s+(?:(?:-s|--scope|-t|--transport|-e|--env|-H|--header)\s+\S+\s+|--?\S+\s+)*(?P<name>[^\s;&|-][^\s;&|]*)"),
 ]
 # Optional: npm / pip packages. Off unless BOUNCER_HOOK_PACKAGES=1.
 _PACKAGE = [
-    re.compile(r"(?:^|[\s;&|(])npm\s+(?:install|i|add)\s+(?:--?\S+\s+)*(?P<name>[^\s;&|-][^\s;&|]*)"),
-    re.compile(r"(?:^|[\s;&|(])pip3?\s+install\s+(?:--?\S+\s+)*(?P<name>[^\s;&|-][^\s;&|]*)"),
+    re.compile(r"(?:^|[\s;&|(])" + _P + r"npm\s+(?:install|i|add)\s+(?:--?\S+\s+)*(?P<name>[^\s;&|-][^\s;&|]*)"),
+    re.compile(r"(?:^|[\s;&|(])" + _P + r"pip3?\s+install\s+(?:--?\S+\s+)*(?P<name>[^\s;&|-][^\s;&|]*)"),
 ]
 
 

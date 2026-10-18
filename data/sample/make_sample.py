@@ -91,7 +91,13 @@ demo = [
     ["demo-git-tools", "gitfan-dev", "ALLOW", "3", "demo-git-tools.md"],
     ["demo-weather", "weatherly", "ALLOW", "3", "demo-weather.md"],
     ["solana-wallet-x", "hightower6eu", "BLOCK", "1", ""],
+    ["demo-notes-sync", "fresh-acct-01", "ASK", "3", ""],  # no link, but no track record either
 ]
+# The demo publishers' track record: dated, community-vetted skills (trusted publisher rule)
+legit += [["commit-message-coach", "gitfan-dev", "2025-12-08", "synthetic"],
+          ["git-stash-helper", "gitfan-dev", "2026-02-14", "synthetic"],
+          ["forecast-digest", "weatherly", "2026-01-19", "synthetic"],
+          ["uv-index-alerts", "weatherly", "2026-04-22", "synthetic"]]
 infra += [["demo-git-tools", "domain", "github[.]com", "synthetic"],
           ["demo-weather", "domain", "api.open-weather-demo[.]org", "synthetic"]]
 

@@ -205,7 +205,9 @@ Is the skill itself known_bad?                 ── yes ──► BLOCK
 Path to a known_bad skill of 2 hops?           ── yes ──► BLOCK   (directly shared publisher/domain/IP/payload)
 Path of 3 or 4 hops?                           ── yes ──► ASK     (linked through one middle step)
 Never seen this name at all?                   ── yes ──► ASK     (unknown is not safe)
-Otherwise (seen, no link)                      ────────► ALLOW
+Is the skill itself community-vetted?          ── yes ──► ALLOW
+Publisher has a track record (Q7)?             ── yes ──► ALLOW   (≥2 other vetted skills, none bad, ≥30 days old)
+Otherwise (seen, no link, nothing vouches)     ────────► ASK     (no track record)
 ```
 
 Paths are **never allowed to go through a supernode** (`CommonInfra`). Otherwise every skill using github.com

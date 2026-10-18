@@ -49,7 +49,9 @@ demo-crypto-tracker ──published by──► hightower6eu ◄──published 
 
 - **2 steps away** means it directly shares an account, server, IP or malware file with known malware → **BLOCK**
 - **3–4 steps away** means it's linked through one middle step, which could be coincidence → **ASK** a human
-- **Never seen, or no link at all** → **ASK** if never seen, **ALLOW** if we know it and it's clean
+- **Never seen** → **ASK**: unknown is not the same as safe
+- **No link to malware** → **ALLOW** only if something vouches for it: the skill is community-vetted, or its
+  publisher has a **track record** of vetted skills. Otherwise **ASK**: finding nothing bad isn't proof of safety
 
 Sites that *everyone* uses (github.com, pypi.org) connect everything to everything, so they prove nothing.
 Bouncer marks them as "common infrastructure" and never counts them as evidence.
@@ -84,11 +86,13 @@ known-malicious skills. Bouncer writes the new clue into the graph and links the
 
 ![Investigator: safe extraction, the new domain linked to a campaign IP, verdict ASK](docs/screenshots/investigate.png)
 
-### 3. No false alarm on legitimate skills
+### 3. A legitimate skill, allowed on its track record
 `demo-git-tools` uses github.com, and so does some malware. But everyone uses GitHub, so that link is shown faded
-and ignored. No real connection, so it's **ALLOWED**.
+and ignored. That only proves there's no *bad* evidence, though. It's **ALLOWED** because there is *good* evidence:
+its publisher `gitfan-dev` has 3 community-vetted skills, the oldest from December 2025, and none malicious. The
+same graph walk that finds an attacker's other skills finds a good publisher's other skills.
 
-![A legitimate skill is allowed: github.com is shown faded and ignored](docs/screenshots/check-allow.png)
+![A legitimate skill is allowed: trusted publisher with 3 vetted skills, github.com faded and ignored](docs/screenshots/check-allow.png)
 
 ### Campaigns, found automatically
 The graph algorithm **WCC (Weakly Connected Components)** groups everything that's connected into "islands". Every
@@ -108,13 +112,22 @@ ones "not on the list".
 
 | | Bouncer | Blocklist |
 |---|---|---|
-| Hidden malicious skills caught | **94.6%** (246 of 260) | 0% |
-| Legitimate skills wrongly flagged | **1.5%** (10 of 655 checks) | 0% |
+| Hidden malicious skills linked to the campaign | **94.6%** (246 of 260) | 0% |
+| The rest: no link, but no track record either → held for a human (ASK) | **5.4%** (14 of 260) | – |
+| Hidden malicious skills allowed | **0%** | 100% |
+| Legitimate skills wrongly flagged | **1.5%** (10 of 680 checks) | 0% |
 | Time per check | **~5 ms** | – |
 
+"Caught" only counts skills the graph actually *links* to known malware. The 5.4% held for a human are counted
+separately, so the trust rule can't inflate the headline number.
+
 **What it misses, honestly:**
-- **Lone wolves:** a malicious skill from a fresh account that shares *nothing* with known attacks. If there's
-  no connection, a graph can't see one.
+- **Lone wolves:** a malicious skill from a fresh account that shares *nothing* with known attacks. A graph can't
+  see a connection that isn't there. It isn't waved through anymore (no track record → ASK), but a human has to
+  make the call.
+- **New legitimate publishers pay for that:** a brand-new honest publisher has no track record either, so their
+  first skills are ASK too. That's the price of "unknown is not safe".
+- **A trusted account can be stolen.** That's why trust only ever turns ASK into ALLOW and never cancels a block.
 - **False alarms:** a few legitimate skills hosted on a cloud IP that a campaign also used. IPs on shared hosting
   are weaker evidence than a shared account.
 
@@ -287,6 +300,22 @@ RETURN p.handle, p.first_seen, count(s) AS skills,
        sum(CASE WHEN s.status = 'known_bad' THEN 1 ELSE 0 END) AS known_bad
 ```
 
+**Q7: Track record** is the mirror image of Q2. Instead of walking to an attacker's other skills, it walks to the
+publisher's other *vetted* skills. It only follows `PUBLISHED_BY`, because sharing github.com with a vetted skill
+proves nothing (the same supernode rule as for blocking):
+```cypher
+MATCH (s:Skill {name: $name})-[:PUBLISHED_BY]->(p:Publisher)
+WITH s, p
+MATCH (p)<-[:PUBLISHED_BY]-(o:Skill)
+WITH s, p, o
+WHERE o <> s
+RETURN p, collect(CASE WHEN o.status = 'trusted' THEN o END) AS vetted,
+       sum(CASE WHEN o.status = 'known_bad' THEN 1 ELSE 0 END) AS known_bad
+```
+A publisher is trusted with **at least 2 other vetted skills, none of their skills malicious, and the oldest vetted
+one at least 30 days old**. The age rule is there for "sleeper" accounts, which publish harmless skills first to
+build a reputation. A vetted skill with no date doesn't count, because the record's age is unknown.
+
 **Q5: Neighbourhood** (what the website draws), capped at 150 nodes:
 ```cypher
 MATCH (s) WHERE id(s) = $id
@@ -320,7 +349,12 @@ CREATE (d)-[:ABOUT]->(s)
 | Directly shares an account, server, IP or malware marker with known malware (2 steps) | **BLOCK** |
 | Linked through one middle step (3–4 steps) | **ASK** a human |
 | Never seen before | **ASK**: unknown is not the same as safe |
-| Known, and no link once common sites are ignored | **ALLOW** |
+| No link, and the skill itself is community-vetted | **ALLOW** |
+| No link, and its publisher has a trusted track record (Q7) | **ALLOW** |
+| No link, but nothing vouches for it | **ASK**: no bad evidence isn't proof of safety |
+
+The rules run top to bottom, so **bad evidence always wins**: a trusted publisher whose new skill links to malware
+is still blocked. Trust can only turn ASK into ALLOW.
 
 ### Safer alternatives when something is blocked
 Blocking alone leaves the user stuck, so for every BLOCK or ASK Bouncer also suggests what to install instead.
@@ -345,6 +379,8 @@ The investigator reads attacker-written text, so it's built to resist prompt inj
 - Plain pattern matching runs too, so injected text can't make the AI *hide* a domain.
 - Without an AI key it uses pattern matching only.
 - **The graph rules decide, never the AI.** Nothing in the text is ever fetched, downloaded or run.
+- **Claiming to be safe earns nothing.** ALLOW needs a track record in the graph, which only the community
+  can create. A skill investigated from its own text alone, with no bad links, stays at **ASK**.
 
 ---
 
@@ -435,13 +471,14 @@ indicators are stored defanged (`socifiapp[.]com`, `hxxp://`) so they can't be c
 | [Antiy CERT: *ClawHavoc: Analysis of Large-Scale Poisoning Campaign Targeting the OpenClaw Skill Market*](https://www.antiy.net/p/clawhavoc-analysis-of-large-scale-poisoning-campaign-targeting-the-openclaw-skill-market-for-ai-agents/) | The 12 attacker accounts and their skill counts, 23 skill names, the attacker server, 5 IPs, malware markers, timeline |
 | [The Hacker News: *Researchers Find 341 Malicious ClawHub Skills…*](https://thehackernews.com/2026/02/researchers-find-341-malicious-clawhub.html) | Audit numbers (341 of 2,857 malicious) |
 | [Koi Security: ClawHavoc disclosure](https://www.koi.ai/blog/clawhavoc-341-malicious-clawedbot-skills-found-by-the-bot-they-were-targeting) | The original discovery and campaign name |
-| [VoltAgent/awesome-openclaw-skills](https://github.com/VoltAgent/awesome-openclaw-skills) | 131 legitimate skills (publishers flagged by Antiy removed) |
+| [VoltAgent/awesome-openclaw-skills](https://github.com/VoltAgent/awesome-openclaw-skills) | 131 legitimate skills (publishers flagged by Antiy removed). The public list has no dates and at most 2 skills per publisher, so on real data no publisher meets the trust threshold yet |
 
 **What's synthetic (labelled `synthetic=true` in the data):** the 1,184 real skills were removed from ClawHub, so
 no full list is public. The accounts, servers, IPs and 23 skill names are real. We added made-up skill names
 attached to that **real** infrastructure to bring the campaign to 150 skills, and the reports list servers for
 the campaign as a whole, so which skill used which server is our assignment. A small second campaign
-("SyntheticBravo"), 10 "lone wolf" test skills, and all `demo-*` skills are synthetic. Full details:
+("SyntheticBravo"), 10 "lone wolf" test skills, all `demo-*` skills, and the 5 dated vetted skills that give the
+demo publishers `gitfan-dev` and `weatherly` their track record are synthetic. Full details:
 [`data/sources.md`](data/sources.md).
 
 ---
@@ -452,6 +489,8 @@ the campaign as a whole, so which skill used which server is our assignment. A s
   flagged even when every server is new.
 - **Benchmark against file scanners** (Cisco Skill Scanner, VirusTotal) on synthetic skill texts, to measure how
   much the combination catches.
+- **Stronger trust signals:** signed publishers (ClawHub verifying who published what), install counts, and
+  reviews from known-good accounts, weighted by how long the account has been clean.
 - More sources: npm/PyPI packages (OpenSSF malicious-packages data) and MCP servers.
 - MCP "rug pull" detection: alert when a tool's description changes after you approved it.
 - Shared threat memory across organisations: one team's investigation protects everyone.

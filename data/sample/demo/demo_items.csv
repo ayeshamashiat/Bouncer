@@ -4,3 +4,4 @@ demo-pdf-helper,,ASK,2,demo-pdf-helper.md
 demo-git-tools,gitfan-dev,ALLOW,3,demo-git-tools.md
 demo-weather,weatherly,ALLOW,3,demo-weather.md
 solana-wallet-x,hightower6eu,BLOCK,1,
+demo-notes-sync,fresh-acct-01,ASK,3,

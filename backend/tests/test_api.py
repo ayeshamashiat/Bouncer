@@ -15,7 +15,7 @@ def test_check_shape(g):
     r = client.post("/api/check", json={"kind": "skill", "name": "demo-crypto-tracker", "source": "ui"})
     body = r.json()
     assert r.status_code == 200
-    assert set(body) == {"verdict", "reason", "route", "evidence", "campaign", "checked_at", "ms", "alternatives"}
+    assert set(body) == {"verdict", "rule", "reason", "route", "evidence", "campaign", "checked_at", "ms", "alternatives"}
     assert all(set(n) == NODE_KEYS for n in body["evidence"]["nodes"])
     assert body["checked_at"].endswith("Z")
 

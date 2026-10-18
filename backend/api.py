@@ -95,6 +95,7 @@ class Alternative(BaseModel):
 
 class CheckResponse(BaseModel):
     verdict: Literal["ALLOW", "ASK", "BLOCK"]
+    rule: str = ""
     reason: str
     route: list[str]
     evidence: Graph
@@ -152,6 +153,7 @@ class EvalSplit(BaseModel):
     hidden: int
     blocklist_caught: int
     graph_caught: int
+    held: int = 0
     false_alarms: int
     legit: int
 
@@ -159,6 +161,8 @@ class EvalSplit(BaseModel):
 class EvalResponse(BaseModel):
     splits: list[EvalSplit]
     recall: float
+    held_rate: float = 0.0
+    allowed_rate: float = 0.0
     false_alarm_rate: float
     blocklist_recall: float
     avg_ms: float

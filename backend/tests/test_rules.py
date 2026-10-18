@@ -12,7 +12,37 @@ def test_rulebook_table():
     assert rules.decide(True, "unknown", 3)[0] == "ASK"
     assert rules.decide(True, "unknown", 4)[0] == "ASK"
     assert rules.decide(False, None, None)[0] == "ASK"
-    assert rules.decide(True, "unknown", None)[0] == "ALLOW"
+    assert rules.decide(True, "trusted", None) == ("ALLOW", "vetted_skill")
+    assert rules.decide(True, "unknown", None, trusted_publisher=True) == ("ALLOW", "trusted_publisher")
+    assert rules.decide(True, "unknown", None) == ("ASK", "no_track_record")
+
+
+def test_bad_evidence_beats_trust():
+    # a trusted publisher (or a vetted skill) that links to malware is still blocked / asked
+    assert rules.decide(True, "unknown", 2, trusted_publisher=True)[0] == "BLOCK"
+    assert rules.decide(True, "unknown", 4, trusted_publisher=True)[0] == "ASK"
+    assert rules.decide(True, "trusted", 2)[0] == "BLOCK"
+
+
+def test_publisher_trust_thresholds():
+    assert rules.publisher_is_trusted(vetted=2, known_bad=0, age_days=60)
+    assert not rules.publisher_is_trusted(vetted=1, known_bad=0, age_days=60)    # too little history
+    assert not rules.publisher_is_trusted(vetted=5, known_bad=1, age_days=400)   # ever published malware
+    assert not rules.publisher_is_trusted(vetted=5, known_bad=0, age_days=10)    # sleeper: too new
+    assert not rules.publisher_is_trusted(vetted=5, known_bad=0, age_days=None)  # age unknown
+
+
+def test_trusted_publisher_evidence(g):
+    r = check_install("skill", "demo-git-tools", write_back=False, g=g)
+    assert r["rule"] == "trusted_publisher"
+    assert "gitfan-dev" in r["reason"] and "2 community-vetted skills" in r["reason"]
+    assert r["route"] == ["skill:demo-git-tools", "publisher:gitfan-dev", "skill:commit-message-coach"]
+    assert set(r["route"]) <= {n["id"] for n in r["evidence"]["nodes"]}
+
+
+def test_no_track_record_is_asked(g):
+    r = check_install("skill", "demo-notes-sync", write_back=False, g=g)
+    assert (r["verdict"], r["rule"]) == ("ASK", "no_track_record")
 
 
 def test_demo_items_get_expected_verdicts(g):

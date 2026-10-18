@@ -361,3 +361,5 @@ agentgate,domain,open-meteo[.]com,synthetic
 a-share-short-decision,ip,54.91.154[.]110,synthetic
 demo-git-tools,domain,github[.]com,synthetic
 demo-weather,domain,open-meteo[.]com,synthetic
+git-stash-helper,domain,github[.]com,synthetic
+pr-review-checklist,domain,registry.npmjs[.]org,synthetic

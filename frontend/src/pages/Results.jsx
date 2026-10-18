@@ -21,7 +21,7 @@ export default function Results() {
           <h1>Results</h1>
           <p className="muted">
             Method: we hide the malicious label on a random 30% of campaign skills, then ask each method to find them
-            again. Five random splits; ASK or BLOCK counts as caught.
+            again. Five random splits; caught means the graph links it to known malware.
           </p>
         </div>
       </div>
@@ -43,20 +43,26 @@ export default function Results() {
               <Bar label="Blocklist / name match" value={data.blocklist_recall} cls="bar-muted" />
               <Bar label="Bouncer (graph)" value={data.recall} cls="bar-accent" />
             </div>
+            {data.held_rate != null && (
+              <p className="muted small">
+                The other {pct(data.held_rate)} had no link to malware, but no track record either, so they were
+                held for a human (ASK). Let through: {pct(data.allowed_rate ?? 0)}.
+              </p>
+            )}
           </section>
 
           <section className="card table-card">
             <table className="table">
               <thead>
                 <tr>
-                  <th>Seed</th><th>Hidden</th><th>Blocklist caught</th><th>Bouncer caught</th><th>Legit</th><th>False alarms</th>
+                  <th>Seed</th><th>Hidden</th><th>Blocklist caught</th><th>Bouncer caught</th><th>Held</th><th>Legit</th><th>False alarms</th>
                 </tr>
               </thead>
               <tbody>
                 {data.splits.map((s) => (
                   <tr key={s.seed}>
                     <td>{s.seed}</td><td>{s.hidden}</td><td>{s.blocklist_caught}</td>
-                    <td>{s.graph_caught}</td><td>{s.legit}</td><td>{s.false_alarms}</td>
+                    <td>{s.graph_caught}</td><td>{s.held ?? '—'}</td><td>{s.legit}</td><td>{s.false_alarms}</td>
                   </tr>
                 ))}
               </tbody>

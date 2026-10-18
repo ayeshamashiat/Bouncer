@@ -26,6 +26,16 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def _age_days(day: str | None) -> int | None:
+    if not day:
+        return None
+    try:
+        then = datetime.strptime(day[:10], "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    except ValueError:
+        return None
+    return (datetime.now(timezone.utc) - then).days
+
+
 def _describe_clue(n) -> tuple[str, str]:
     label = next((l for l in n.labels if l in _CLUE_WORDS), "Domain")
     value = n.properties.get({"Publisher": "handle", "IP": "addr", "PayloadString": "value"}.get(label, "name"))
@@ -45,7 +55,15 @@ def check_install(kind: str, name: str, source: str = "ui", write_back: bool = T
         path, path_campaign = queries.guilt_by_connection(name, rules.ASK_MAX_HOPS, g)
         hops = len(path.edges()) if path is not None else None
 
-    verdict, rule = rules.decide(seen, status, hops)
+    # Good evidence is only looked up when nothing bad was found (trust can't cancel a block).
+    record, trusted = None, False
+    if seen and hops is None and status not in ("known_bad", "trusted"):
+        record = queries.track_record(name, g)
+        if record:
+            dated = [v for v in record["vetted"] if v.properties.get("published_at")]
+            trusted = rules.publisher_is_trusted(len(dated), record["known_bad"], _age_days(record["since"]))
+
+    verdict, rule = rules.decide(seen, status, hops, trusted)
 
     # ---- reason + route + evidence
     if rule == rules.R_KNOWN_BAD:
@@ -78,15 +96,32 @@ def check_install(kind: str, name: str, source: str = "ui", write_back: bool = T
         evidence = {"nodes": [{"id": f"skill:{name}", "label": name, "type": "Skill",
                                "status": "unknown", "common_infra": False}], "edges": []}
         reason = "never seen before: no record of this item, and unknown is not safe"
-    else:
+    elif rule == rules.R_TRUSTED_PUBLISHER:
+        nodes, edges = queries.neighbourhood(skill, hops=1, limit=25, g=g)
+        pub, vetted = record["publisher"], record["vetted"]
+        extra_nodes, extra_edges = queries.publisher_skills(pub, [v.properties["name"] for v in vetted], g)
+        evidence = graph_json(nodes + [n for n in extra_nodes if n.id not in {x.id for x in nodes}],
+                              edges + extra_edges)
+        route = [node_id(skill), node_id(pub), node_id(vetted[0])]
+        n = len(vetted)
+        reason = (f"trusted publisher {pub.properties['handle']}: {n} community-vetted skill{'s' if n != 1 else ''} "
+                  f"since {record['since']}, none malicious, and no link to any known-malicious skill")
+    elif rule == rules.R_VETTED:
         nodes, edges = queries.neighbourhood(skill, hops=1, limit=25, g=g)
         evidence = graph_json(nodes, edges)
         route = [node_id(skill)]
-        reason = "no link to any known-malicious skill (shared infrastructure like github.com is ignored)"
+        reason = ("community-vetted skill with no link to any known-malicious skill "
+                  "(shared infrastructure like github.com is ignored)")
+    else:  # R_NO_RECORD
+        nodes, edges = queries.neighbourhood(skill, hops=1, limit=25, g=g)
+        evidence = graph_json(nodes, edges)
+        route = [node_id(skill)]
+        reason = ("no link to known malware, but nothing vouches for it either: not community-vetted and "
+                  "its publisher has no track record, so a human decides")
 
     checked_at = now_iso()
     ms = round((time.perf_counter() - t0) * 1000)
-    result = {"verdict": verdict, "reason": reason, "route": route, "evidence": evidence,
+    result = {"verdict": verdict, "rule": rule, "reason": reason, "route": route, "evidence": evidence,
               "campaign": campaign or None, "checked_at": checked_at, "ms": ms,
               "alternatives": suggest_alternatives(name, g) if suggest and verdict != rules.ALLOW else []}
     if write_back:

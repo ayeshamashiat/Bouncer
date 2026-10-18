@@ -219,6 +219,50 @@ def alternatives(cats: list[str], exclude: str, limit: int = 12, g=None) -> list
     return [(r[0], r[1]) for r in g.ro_query(Q6_ALTERNATIVES, {"cats": cats, "exclude": exclude, "limit": limit}).result_set]
 
 
+# ---------------------------------------------------------------- Q7 track record (trust)
+# The mirror image of Q2: walk skill -> publisher -> the publisher's OTHER skills, and count good
+# evidence (community-vetted skills) instead of bad. Only PUBLISHED_BY is followed: sharing
+# github.com with a vetted skill proves nothing, the same supernode rule as for blocking.
+Q7_TRACK_RECORD = """
+MATCH (s:Skill {name: $name})-[:PUBLISHED_BY]->(p:Publisher)
+WITH s, p
+MATCH (p)<-[:PUBLISHED_BY]-(o:Skill)
+WITH s, p, o
+WHERE o <> s
+RETURN p, collect(CASE WHEN o.status = 'trusted' THEN o END) AS vetted,
+       sum(CASE WHEN o.status = 'known_bad' THEN 1 ELSE 0 END) AS known_bad
+"""
+
+
+def track_record(name: str, g=None) -> dict | None:
+    """{publisher node, vetted [skill nodes, oldest first], known_bad count, since 'YYYY-MM-DD' or None}
+    for the skill's publisher, or None when the skill has no publisher with other skills."""
+    g = g or get_graph()
+    rows = g.ro_query(Q7_TRACK_RECORD, {"name": name}).result_set
+    if not rows:
+        return None
+    pub, vetted, bad = rows[0]
+    vetted = sorted((v for v in vetted if v is not None), key=lambda v: v.properties.get("published_at") or "9999")
+    dates = [v.properties.get("published_at") for v in vetted if v.properties.get("published_at")]
+    return {"publisher": pub, "vetted": vetted, "known_bad": int(bad), "since": dates[0] if dates else None}
+
+
+Q7_PUBLISHER_SKILLS = """
+MATCH (p) WHERE id(p) = $id
+WITH p
+MATCH (o:Skill)-[r:PUBLISHED_BY]->(p)
+WHERE o.name IN $names
+RETURN o, r
+"""
+
+
+def publisher_skills(pub, names: list[str], g=None):
+    """The vetted skills behind a trusted publisher, as (nodes, edges) for the evidence graph."""
+    g = g or get_graph()
+    rows = g.ro_query(Q7_PUBLISHER_SKILLS, {"id": pub.id, "names": names}).result_set
+    return [pub] + [o for o, _ in rows], [r for _, r in rows]
+
+
 # ---------------------------------------------------------------- misc
 def node_count(g=None) -> int:
     g = g or get_graph()

@@ -52,6 +52,8 @@ Error  { "error": { "code": "not_found", "message": "No item named X" } }   // H
 POST /api/check   { "kind": "skill", "name": "crypto-tracker-pro", "source": "ui" }
 -> CheckResponse
 { "verdict": "BLOCK",                               // ALLOW | ASK | BLOCK
+  "rule": "direct_link",                            // which rule fired: known_bad | direct_link | indirect_link |
+                                                    // never_seen | vetted_skill | trusted_publisher | no_track_record
   "reason": "shares publisher hightower6eu with 334 known-malicious skills",
   "route": ["skill:crypto-tracker-pro", "publisher:hightower6eu", "skill:solana-wallet-x"],
   "evidence": { "nodes": [Node, ...], "edges": [Edge, ...] },   // includes every node in route
@@ -74,8 +76,11 @@ POST /api/investigate   { "name": "demo-pdf-helper", "text": "<SKILL.md contents
 
 GET /api/eval
 -> { "splits": [ { "seed": 0, "hidden": 12, "blocklist_caught": 0, "graph_caught": 10,
-                   "false_alarms": 2, "legit": 60 } ],
-     "recall": 0.83, "false_alarm_rate": 0.04, "blocklist_recall": 0.0, "avg_ms": 11 }
+                   "held": 2, "false_alarms": 2, "legit": 60 } ],
+     "recall": 0.83,                     // linked to known malware by a graph path
+     "held_rate": 0.17,                  // no link, but no track record -> ASK
+     "allowed_rate": 0.0,                // slipped through as ALLOW
+     "false_alarm_rate": 0.04, "blocklist_recall": 0.0, "avg_ms": 11 }
 ```
 
 Notes for the UI:

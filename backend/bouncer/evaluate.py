@@ -2,8 +2,11 @@
 
 Method (one sentence for the results page):
   For each of 5 random seeds we hide the known_bad label on 30% of malicious skills,
-  then run check_install on the hidden ones and on every legitimate skill;
-  ASK or BLOCK counts as flagged.
+  then run check_install on the hidden ones and on every legitimate skill.
+  recall = hidden skills the graph LINKS to known malware (BLOCK, or ASK through a path).
+  held   = hidden skills with no link that were still not allowed, because nothing vouches
+           for them (no track record). Reported separately so trust can't inflate recall.
+  A legitimate skill getting ASK or BLOCK counts as a false alarm.
 
   * Baseline: a blocklist / name match. It catches 0% of hidden items by construction,
     because hiding the label is exactly "not on the blocklist".
@@ -47,18 +50,19 @@ def run(seeds=SEEDS, hide_fraction=HIDE_FRACTION) -> dict:
         g.query("UNWIND $names AS n MATCH (s:Skill {name: n}) SET s.status = 'unknown'", {"names": hidden})
         blocklist = set(bad) - set(hidden)
 
-        graph_caught = blocklist_caught = false_alarms = 0
+        graph_caught = held = blocklist_caught = false_alarms = 0
         for name in hidden:
             r = check_install("skill", name, write_back=False, g=g, suggest=False)
             total_ms += r["ms"]; n_checks += 1
-            graph_caught += r["verdict"] in ("ASK", "BLOCK")
+            graph_caught += r["rule"] in ("direct_link", "indirect_link")
+            held += r["rule"] == "no_track_record"
             blocklist_caught += name in blocklist
         for name in legit:
             r = check_install("skill", name, write_back=False, g=g, suggest=False)
             total_ms += r["ms"]; n_checks += 1
             false_alarms += r["verdict"] in ("ASK", "BLOCK")
         splits.append({"seed": seed, "hidden": len(hidden), "blocklist_caught": blocklist_caught,
-                       "graph_caught": graph_caught, "false_alarms": false_alarms, "legit": len(legit)})
+                       "graph_caught": graph_caught, "held": held, "false_alarms": false_alarms, "legit": len(legit)})
         g.delete()
 
     hidden_total = sum(s["hidden"] for s in splits) or 1
@@ -66,6 +70,8 @@ def run(seeds=SEEDS, hide_fraction=HIDE_FRACTION) -> dict:
     return {
         "splits": splits,
         "recall": round(sum(s["graph_caught"] for s in splits) / hidden_total, 3),
+        "held_rate": round(sum(s["held"] for s in splits) / hidden_total, 3),
+        "allowed_rate": round(sum(s["hidden"] - s["graph_caught"] - s["held"] for s in splits) / hidden_total, 3),
         "false_alarm_rate": round(sum(s["false_alarms"] for s in splits) / legit_total, 3),
         "blocklist_recall": round(sum(s["blocklist_caught"] for s in splits) / hidden_total, 3),
         "avg_ms": round(total_ms / n_checks, 1) if n_checks else 0.0,
@@ -82,11 +88,12 @@ def load_or_run(force: bool = False) -> dict:
 
 if __name__ == "__main__":
     res = load_or_run(force=True)
-    print(f"{'seed':>4} {'hidden':>6} {'blocklist':>9} {'bouncer':>7} {'false_alarms':>12} {'legit':>5}")
+    print(f"{'seed':>4} {'hidden':>6} {'blocklist':>9} {'bouncer':>7} {'held':>4} {'false_alarms':>12} {'legit':>5}")
     for s in res["splits"]:
-        print(f"{s['seed']:>4} {s['hidden']:>6} {s['blocklist_caught']:>9} {s['graph_caught']:>7} "
+        print(f"{s['seed']:>4} {s['hidden']:>6} {s['blocklist_caught']:>9} {s['graph_caught']:>7} {s['held']:>4} "
               f"{s['false_alarms']:>12} {s['legit']:>5}")
     print(f"\nrecall {res['recall']:.1%}  vs blocklist {res['blocklist_recall']:.1%}  |  "
+          f"held (no track record) {res['held_rate']:.1%}  allowed {res['allowed_rate']:.1%}  |  "
           f"false alarms {res['false_alarm_rate']:.1%}  |  avg {res['avg_ms']} ms/check")
     if res["recall"] == 1.0 and res["false_alarm_rate"] == 0.0:
         print("WARNING: perfect score. The test data is probably too easy; say so honestly in the README.")
